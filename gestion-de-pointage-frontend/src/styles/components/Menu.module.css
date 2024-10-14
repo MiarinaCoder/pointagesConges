@@ -1,0 +1,112 @@
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 250px;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #ecf0f1;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.menuItems {
+  list-style-type: none;
+  padding: 2rem 0;
+  margin: 0;
+}
+
+.menuItems li {
+  margin-bottom: 1rem;
+}
+
+.menuItems a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #ecf0f1;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.menuItems a:hover,
+.menuItems .active a {
+  background-color: #34495e;
+  transform: translateX(10px);
+}
+
+.icon {
+  margin-right: 1rem;
+  font-size: 1.2rem;
+}
+
+.logoutContainer {
+  position: absolute;
+  bottom: 2rem;
+  width: 100%;
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  margin: 0 auto;
+  padding: 0.75rem;
+  background-color: #e74c3c;
+  color: #ecf0f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logoutButton:hover {
+  background-color: #c0392b;
+}
+
+@media (max-width: 768px) {
+  .menu {
+    transform: translateX(-100%);
+  }
+
+  .menu.open {
+    transform: translateX(0);
+  }
+
+  .menuToggle {
+    display: block;
+  }
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0%;
+  padding: 20px;
+  /* padding-left: 60px; */
+  padding-bottom: 0%;
+}
+
+.userIcon {
+  font-size: 24px;
+  margin-right: 20px;
+  color: #fff;
+}
+
+.userName {
+  font-weight: bold;
+  color: #fff;
+}

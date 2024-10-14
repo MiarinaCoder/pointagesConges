@@ -1,0 +1,134 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0px 20px 20px 20px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  color: #333;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table th,
+.table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  color: #333;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.table tr:hover {
+  background-color: #e9ecef;
+  transition: background-color 0.3s ease;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.paginationButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.paginationButton:hover {
+  background-color: #0056b3;
+}
+
+.paginationButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background-color: #0056b3;
+}
+
+.perPageSelector {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.perPageSelector label {
+  margin-right: 10px;
+}
+
+.perPageSelector select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+}
+
+.loader {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  color: #dc3545;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.noData {
+  text-align: center;
+  color: #6c757d;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 8px 10px;
+  }
+
+  .paginationButton {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+}

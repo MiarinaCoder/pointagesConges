@@ -1,0 +1,97 @@
+/* Menu */
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px; /* Ajustez selon vos besoins */
+    height: 100vh;
+    background: #2C3E50; /* Gris foncé pour le fond du menu */
+    color: #ECF0F1; /* Blanc pour le texte */
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+  
+  /* Bouton toggle */
+  .menuToggle {
+    background: none;
+    border: none;
+    color: #ECF0F1;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 1rem;
+    transition: color 0.3s ease;
+  }
+  
+  .menuToggle:hover {
+    color: #3498DB; /* Bleu clair pour le survol */
+  }
+  
+  /* Liste des éléments du menu */
+  .menuItems {
+    overflow: hidden;
+    max-height: 0; /* Par défaut, le menu est fermé */
+    transition: max-height 0.3s ease-out;
+    background-color: #2C3E50; /* Assurez-vous que le fond est bien visible */
+  }
+  
+  .menuItems.open {
+    max-height: 1000px; /* Ajustez selon la taille de votre contenu, plus grand que le menu attendu */
+  }
+  
+  .menuItems a {
+    display: flex;
+    align-items: center;
+    color: #ECF0F1;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .menuItems a:hover,
+  .menuItems .active a {
+    background-color: #3498DB; /* Bleu clair pour l'élément actif */
+    color: #FFF; /* Blanc pour le texte de l'élément actif */
+  }
+  
+  /* Bouton de déconnexion */
+  .logoutButton {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #E74C3C; /* Rouge pour le bouton de déconnexion */
+    color: #ECF0F1;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logoutButton:hover {
+    background-color: #C0392B; /* Rouge foncé pour le survol */
+  }
+  
+  /* Styles pour les écrans mobiles */
+  @media (max-width: 768px) {
+    .menu {
+      width: 100%;
+      height: auto;
+    }
+  
+    .menuItems {
+      max-height: 0;
+      transition: max-height 0.3s ease-out;
+    }
+  
+    .menuItems.open {
+      max-height: 1000px; /* Ajustez selon la taille de votre contenu */
+    }
+  
+    .menuToggle {
+      display: block;
+    }
+  }
+  
