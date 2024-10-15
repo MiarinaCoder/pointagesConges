@@ -3,7 +3,7 @@
 
 import { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../services/api' // Importez votre service API
+import api from '../services/api';
 import jwt_decode from 'jwt-decode';
 
 const AuthContext = createContext();
@@ -17,25 +17,22 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     
-
     if (token) {
-      try{
+      try {
         const decoded = jwt_decode(token);
         setUser({ 
           token, 
           id: decoded.userId,
           sessionId: decoded.sessionId, 
-          prenom: decoded.prenom, // Récupérez le prénom de l'utilisateur
+          prenom: decoded.prenom,
           email: decoded.email,
           role: decoded.role
         });
+      } catch (err) {
+        console.error('Invalid token', err);
+        localStorage.removeItem('token');
+        localStorage.removeItem('sessionId');
       }
-        catch (err) {
-          console.error('Invalid token', err);
-          // Gérer l'erreur comme vous le souhaitez, par exemple en déconnectant l'utilisateur
-        }
-        setLoading(false);
-      
     }
     setLoading(false);
   }, []);
@@ -48,8 +45,18 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem('token', token);
       localStorage.setItem('sessionId', sessionId);
-      setUser({ token, sessionId,name: response.data.name }); // Stocker le nom d'utilisateur
-      router.push('/dashboard'); // Redirection après connexion
+      
+      const decoded = jwt_decode(token);
+      setUser({ 
+        token, 
+        id: decoded.userId,
+        sessionId: sessionId,
+        prenom: decoded.prenom,
+        email: decoded.email,
+        role: decoded.role
+      });
+      
+      return true;
     } catch (error) {
       throw new Error('Login failed');
     }

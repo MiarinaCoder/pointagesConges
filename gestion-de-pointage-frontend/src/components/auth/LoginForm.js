@@ -156,87 +156,89 @@
 //     </div>
 //   );
 // }
+  'use client';
 
-'use client';
+  import { useContext, useState } from 'react';
+  import { useRouter } from 'next/navigation';
+  import AuthContext from '../../context/authContext';
+  import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+  import styles from '../../styles/components/LoginForm.module.css';
 
-import { useContext, useState } from 'react';
-import AuthContext from '../../context/authContext';
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import styles from '../../styles/components/LoginForm.module.css';
+  export default function LoginForm() {
+    const { login } = useContext(AuthContext);
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
-export default function LoginForm() {
-  const { login } = useContext(AuthContext);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        await login(email, password);
+        router.push('/dashboard');
+      } catch (err) {
+        setError('Échec de la connexion');
+        console.error(err);
+      }
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await login(email, password);
-    } catch (err) {
-      setError('Échec de la connexion');
-      console.error(err);
-    }
-  };
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+    };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  return (
-    <div className={styles.loginContainer}>
-      <form onSubmit={handleSubmit} className={styles.loginForm}>
-        {/* <img src="/logo.png" alt="Logo" className={styles.logo} /> */}
-        <h2>Connexion</h2>
-        {error && <p className={styles.error}>{error}</p>}
-        <div className={styles.inputGroup}>
-          <FaUser className={styles.icon} />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className={styles.inputGroup}>
-          <FaLock className={styles.icon} />
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button 
-            type="button" 
-            onClick={togglePasswordVisibility} 
-            className={styles.passwordToggle}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
+    return (
+      <div className={styles.loginContainer}>
+        <form onSubmit={handleSubmit} className={styles.loginForm}>
+          {/* <img src="/logo.png" alt="Logo" className={styles.logo} /> */}
+          <h2>Connexion</h2>
+          {error && <p className={styles.error}>{error}</p>}
+          <div className={styles.inputGroup}>
+            <FaUser className={styles.icon} />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <FaLock className={styles.icon} />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button 
+              type="button" 
+              onClick={togglePasswordVisibility} 
+              className={styles.passwordToggle}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          <div className={styles.rememberMe}>
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="rememberMe">Se souvenir de moi</label>
+          </div>
+          <button type="submit" className={styles.loginButton}>
+            Se connecter
           </button>
-        </div>
-        <div className={styles.rememberMe}>
-          <input
-            type="checkbox"
-            id="rememberMe"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <label htmlFor="rememberMe">Se souvenir de moi</label>
-        </div>
-        <button type="submit" className={styles.loginButton}>
-          Se connecter
-        </button>
-        <div className={styles.additionalOptions}>
-          <button type="button" className={styles.forgotPassword}>
-            Mot de passe oublié ?
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-}
+          <div className={styles.additionalOptions}>
+            <button type="button" className={styles.forgotPassword}>
+              Mot de passe oublié ?
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }

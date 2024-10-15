@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { FaUserCircle, FaClock, FaChartPie } from "react-icons/fa";
 import Session from "./../../components/sessions/session";
 import PieChart from "./../../components/sessions/piechart";
@@ -9,7 +10,22 @@ import Layout from "../../components/layout/Layout";
 import AuthContext from "@/context/authContext";
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <Layout>
