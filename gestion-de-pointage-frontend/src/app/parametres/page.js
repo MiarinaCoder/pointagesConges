@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import api from '@/services/api';
 import styles from './Parametres.module.css';
-import Modal from '../../components/Modal';
+import ParametresForm from '../../components/forms/ParametresFrom';
 import Layout from '../../components/layout/Layout';
 
 const Parametres = () => {
@@ -63,16 +63,16 @@ const Parametres = () => {
         <button onClick={() => setIsModalOpen(true)} className={styles.button}>Modifier</button>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <ParametresForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h2>Modifier les paramètres</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Heure de Début</label>
-            <input type="time" name="tempsDebut" value={params.tempsDebutTravail} onChange={handleChange} className={styles.input} />
+            <input type="time" name="tempsDebutTravail" value={params.tempsDebutTravail} onChange={handleChange} className={styles.input} />
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Durée de la Journée (heures)</label>
-            <input type="number" name="dureeJournee" value={params.dureeJourneeTravail} onChange={handleChange} className={styles.input} />
+            <input type="number" name="dureeJourneeTravail" value={params.dureeJourneeTravail} onChange={handleChange} className={styles.input} />
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Seuil Heures Supplémentaires</label>
@@ -84,7 +84,7 @@ const Parametres = () => {
           </div>
           <button type="submit" className={styles.button}>Mettre à jour</button>
         </form>
-      </Modal>
+      </ParametresForm>
     </div>
     </Layout>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
-// import styles from './Modal.module.css';
+import styles from '../../styles/components/Modal.module.css';
 
-const Modal = ({ isOpen, onClose, children }) => {
+const ParametresForm = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return (
@@ -14,4 +14,4 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
-export default Modal;
+export default ParametresForm;
