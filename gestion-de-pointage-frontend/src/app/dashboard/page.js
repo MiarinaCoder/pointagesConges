@@ -8,6 +8,7 @@ import PieChart from "./../../components/sessions/piechart";
 import styles from "./Dashboard.module.css";
 import Layout from "../../components/layout/Layout";
 import AuthContext from "@/context/authContext";
+import withAuth from '../../middleware/withAuth';
 
 const Dashboard = () => {
   const { user, loading } = useContext(AuthContext);
@@ -15,7 +16,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login');
+      router.push('/');
     }
   }, [user, loading, router]);
 
@@ -80,4 +81,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default withAuth(Dashboard);

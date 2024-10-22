@@ -1,43 +1,27 @@
-// 'use client';
+import { useEffect,useContext } from 'react';
+import { useRouter } from 'next/navigation';
+import AuthContext from '../context/authContext';
 
-// import { useRouter } from 'next/navigation';
-// import { useEffect, useState } from 'react';
+export default function withAuth(Component) {
+  return function ProtectedRoute(props) {
+    const {user,loading}=useContext(AuthContext);
+    const router = useRouter()
+    const isAuthenticated = !!user && Object.keys(user).length > 0;// Votre logique pour vérifier si l'utilisateur est connecté
 
-// const withAuth = (WrappedComponent) => {
-//   return function WithAuth(props) {
-//     const [isClient, setIsClient] = useState(false);
-//     const router = useRouter();
+    useEffect(() => {
+        if (!loading && !isAuthenticated) {
+          router.replace('/');
+        }
+      }, [loading, isAuthenticated, router]);
+  
+      if (loading) {
+        return <div>Loading...</div>; // Remplacez ceci par votre propre composant de chargement
+      }
+  
+      if (!isAuthenticated) {
+        return null;
+      }
 
-//     useEffect(() => {
-//       setIsClient(true);
-//       const token = localStorage.getItem('token');
-//       if (!token) {
-//         router.push('/login');
-//       }
-//     }, [router]);
-
-//     if (!isClient) return null;
-
-//     return <WrappedComponent {...props} />;
-//   };
-// };
-
-// export default withAuth;
-
-// components/ProtectedPage.js
-import { useContext } from 'react';
-import AuthContext from '../contexts/authContext';
-import withAuth from '../middlewares/withAuth';
-
-function ProtectedPage() {
-  const { user } = useContext(AuthContext);
-
-  return (
-    <div>
-      <h1>Page protégée</h1>
-      <p>Bienvenue, utilisateur ID : {user?.userId}</p>
-    </div>
-  );
+    return <Component {...props} />
+  }
 }
-
-export default withAuth(ProtectedPage);
