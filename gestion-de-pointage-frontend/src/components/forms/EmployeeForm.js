@@ -20,6 +20,7 @@ export default function EmployeeForm({ utilisateur, onSubmit, onClose }) {
       fonction: "",
       statusMatrimoniale: "",
       adresse: "",
+      genre: "",
     },
   });
 
@@ -38,82 +39,8 @@ export default function EmployeeForm({ utilisateur, onSubmit, onClose }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className={styles.form}>
-      <div className={styles.formGrid}>
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="nom" className={styles.label}>
-            Nom
-          </label>
-          <div className={styles.inputWrapper}>
-            <HiUser className={styles.icon} />
-            <input
-              {...register("nom", { required: "Le nom est requis" })}
-              type="text"
-              id="nom"
-              className={styles.input}
-              placeholder="Entrez le nom"
-            />
-          </div>
-          {errors.nom && <p className={styles.error}>{errors.nom.message}</p>}
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="role" className={styles.label}>
-            Rôle
-          </label>
-          <div className={styles.inputWrapper}>
-            <HiUserCircle className={styles.icon} />
-            <input
-              {...register("role", { required: "Le rôle est requis" })}
-              type="text"
-              id="role"
-              className={styles.input}
-              placeholder="Entrez le rôle"
-            />
-          </div>
-          {errors.role && <p className={styles.error}>{errors.role.message}</p>}
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="prenom" className={styles.label}>
-            Prenom
-          </label>
-          <div className={styles.inputWrapper}>
-            <HiUser className={styles.icon} />
-            <input
-              {...register("prenom", { required: "Le prénom est requis" })}
-              type="text"
-              id="prenom"
-              className={styles.input}
-              placeholder="Entrez le prénom"
-            />
-          </div>
-          {errors.prenom && (
-            <p className={styles.error}>{errors.prenom.message}</p>
-          )}
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label htmlFor="adresse" className={styles.label}>
-            Adresse
-          </label>
-          <div className={styles.inputWrapper}>
-            <HiUserCircle className={styles.icon} />
-            <input
-              {...register("adresse", { required: "L'adresse est requise" })}
-              type="text"
-              id="adresse"
-              className={styles.input}
-              placeholder="Entrez l'adresse"
-            />
-          </div>
-          {errors.adresse && (
-            <p className={styles.error}>{errors.adresse.message}</p>
-          )}
-        </div>
-
-        <div className={styles.inputGroup}>
+    <form onSubmit={handleSubmit(onSubmitForm)} className={styles.formContainer}>
+<div className={styles.inputGroup}>
           <label htmlFor="matriculation" className={styles.label}>
             Matriculation
           </label>
@@ -134,7 +61,70 @@ export default function EmployeeForm({ utilisateur, onSubmit, onClose }) {
           )}
         </div>
 
+
+      <div className={styles.formGrid}>
         <div className={styles.inputGroup}>
+          <label htmlFor="nom" className={styles.label}>
+            Nom
+          </label>
+          <div className={styles.inputWrapper}>
+            <HiUser className={styles.icon} />
+            <input
+              {...register("nom", { required: "Le nom est requis" })}
+              type="text"
+              id="nom"
+              className={styles.input}
+              placeholder="Entrez le nom"
+            />
+          </div>
+          {errors.nom && <p className={styles.error}>{errors.nom.message}</p>}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="prenom" className={styles.label}>
+            Prénoms
+          </label>
+          <div className={styles.inputWrapper}>
+            <HiUser className={styles.icon} />
+            <input
+              {...register("prenom", { required: "Le prénom est requis" })}
+              type="text"
+              id="prenom"
+              className={styles.input}
+              placeholder="Entrez le prénom"
+            />
+          </div>
+          {errors.prenom && (
+            <p className={styles.error}>{errors.prenom.message}</p>
+          )}
+        </div>
+
+        <div className={styles.inputGroup}>
+        <label className={styles.label}>Genre</label>
+        <div className={styles.radioGroup}>
+          <div className={styles.radioOption}>
+            <input
+              {...register("genre", { required: "Le genre est requis" })}
+              type="radio"
+              value="masculin"
+              id="masculin"
+            />
+            <label htmlFor="masculin">Masculin</label>
+          </div>
+          <div className={styles.radioOption}>
+            <input
+              {...register("genre", { required: "Le genre est requis" })}
+              type="radio"
+              value="feminin"
+              id="feminin"
+            />
+            <label htmlFor="feminin">Féminin</label>
+          </div>
+        </div>
+        {errors.genre && <p className={styles.error}>{errors.genre.message}</p>}
+      </div>
+
+      <div className={styles.inputGroup}>
           <label htmlFor="fonction" className={styles.label}>
             Fonction
           </label>
@@ -146,6 +136,85 @@ export default function EmployeeForm({ utilisateur, onSubmit, onClose }) {
               id="fonction"
               className={styles.input}
               placeholder="Entrez la fonction"
+            />
+          </div>
+          {errors.adresse && (
+            <p className={styles.error}>{errors.adresse.message}</p>
+          )}
+        </div>
+        {/* <div className={styles.inputGroup}>
+          <label htmlFor="role" className={styles.label}>
+            Rôle
+          </label>
+          <div className={styles.inputWrapper}>
+            <HiUserCircle className={styles.icon} />
+            <input
+              {...register("role", { required: "Le rôle est requis" })}
+              type="text"
+              id="role"
+              className={styles.input}
+              placeholder="Entrez le rôle"
+            />
+          </div>
+          {errors.role && <p className={styles.error}>{errors.role.message}</p>}
+        </div> */}
+        <div className={styles.inputGroup}>
+          <label htmlFor="role" className={styles.label}>
+            Rôle
+          </label>
+          <div className={styles.inputWrapper}>
+            <HiUserCircle className={styles.icon} />
+            <select
+              {...register("role", { required: "Le rôle est requis" })}
+              id="role"
+              className={styles.input}
+            >
+              <option value="">Sélectionner un rôle</option>
+              <option value="employe">Employé</option>
+              <option value="administrateur">Administrateur</option>
+              <option value="manager">Manager</option>
+            </select>
+          </div>
+          {errors.role && <p className={styles.error}>{errors.role.message}</p>}
+        </div>
+
+        <div className={styles.inputGroup} style={{ gridColumn: "span 2" }}>
+          <label htmlFor="email" className={styles.label}>
+            Email
+          </label>
+          <div className={styles.inputWrapper}>
+            <HiMail className={styles.icon} />
+            <input
+              {...register("email", {
+                required: "L'email est requis",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Adresse email invalide",
+                },
+              })}
+              type="email"
+              id="email"
+              className={styles.input}
+              placeholder="Entrez l'email"
+            />
+          </div>
+          {errors.email && (
+            <p className={styles.error}>{errors.email.message}</p>
+          )}
+        </div>
+
+        <div className={styles.inputGroup}>
+          <label htmlFor="adresse" className={styles.label}>
+            Adresse
+          </label>
+          <div className={styles.inputWrapper}>
+            <HiUserCircle className={styles.icon} />
+            <input
+              {...register("adresse", { required: "L'adresse est requise" })}
+              type="text"
+              id="adresse"
+              className={styles.input}
+              placeholder="Entrez l'adresse"
             />
           </div>
           {errors.adresse && (
@@ -206,34 +275,7 @@ export default function EmployeeForm({ utilisateur, onSubmit, onClose }) {
             )}
           </div>
         )}
-
-        <div className={styles.inputGroup} style={{ gridColumn: "span 2" }}>
-          <label htmlFor="email" className={styles.label}>
-            Email
-          </label>
-          <div className={styles.inputWrapper}>
-            <HiMail className={styles.icon} />
-            <input
-              {...register("email", {
-                required: "L'email est requis",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "Adresse email invalide",
-                },
-              })}
-              type="email"
-              id="email"
-              className={styles.input}
-              placeholder="Entrez l'email"
-            />
-          </div>
-          {errors.email && (
-            <p className={styles.error}>{errors.email.message}</p>
-          )}
-        </div>
       </div>
-
-      <br></br>
       <button type="submit" className={styles.button}>
         {utilisateur ? "Mettre à jour" : "Ajouter"}
       </button>

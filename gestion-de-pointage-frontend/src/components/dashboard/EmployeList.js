@@ -113,6 +113,7 @@ export default function EmployeeList() {
             <th>Email</th>
             <th>Fonction</th>
             <th>Adresse</th>
+            <th>Genre</th>
             <th>Status matrimoniale</th>
             <th>Actions</th>
           </tr>
@@ -126,6 +127,7 @@ export default function EmployeeList() {
               <td>{utilisateur.email}</td>
               <td>{utilisateur.fonction}</td>
               <td>{utilisateur.adresse}</td>
+              <td>{utilisateur.genre}</td>
               <td>{utilisateur.statusMatrimoniale}</td>
               <td>
                 <button onClick={() => openModal(utilisateur)} className={styles.actionButton}>

@@ -27,7 +27,7 @@ const User = {
   },
   getAllUsers: () => {
     return db.query(
-      "SELECT id,matriculation,nom,prenom,adresse,email,fonction,role,statusMatrimoniale FROM utilisateur"
+      "SELECT id,matriculation,nom,prenom,adresse,email,fonction,role,statusMatrimoniale,genre FROM utilisateur"
     );
   },
   updatePassword: (email, newPassword) => {
