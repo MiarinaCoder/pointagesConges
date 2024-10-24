@@ -187,18 +187,28 @@ import { useForm } from "react-hook-form";
 import styles from "./../../styles/components/AbsenceForm.module.css";
 import AuthContext from "@/context/authContext";
 
-const congeTypes = {
-  "congé de maternité": 15,
-  "congé de paternité": 15,
-  "congé standard": 2.5,
-  "": 0,
-};
-
 export default function CongeForm({ conge, onSubmit, onClose }) {
   const { user } = useContext(AuthContext);
   const [selectedTypeDeConge, setSelectedTypeDeConge] = useState(
     conge?.type_de_conge || ""
   );
+console.log(user.genre);
+  // Initialize congeTypes based on user gender
+  const getInitialCongeTypes = () => {
+    const types = {
+      "congé standard": 2.5,
+    };
+    
+    if (user?.genre === 'féminin') {
+      types["congé de maternité"] = 98;
+    }
+    if (user?.genre === 'masculin') {
+      types["congé de paternité"] = 15;
+    }
+    return types;
+  };
+
+  const [congeTypes, setCongeTypes] = useState(getInitialCongeTypes());
 
   const {
     register,
@@ -223,7 +233,6 @@ export default function CongeForm({ conge, onSubmit, onClose }) {
 
   const typeDeConge = watch("type_de_conge");
   const dateDebut = watch("dateDebutAbsence");
-  const nombreJours = watch("nombre_jour_conge");
 
   const calculateEndDate = (startDate, days) => {
     if (!startDate || !days) return "";
@@ -239,36 +248,30 @@ export default function CongeForm({ conge, onSubmit, onClose }) {
       const newEndDate = calculateEndDate(dateDebut, jours);
       if (newEndDate) setValue("dateFinAbsence", newEndDate);
     }
-  }, [typeDeConge, dateDebut, setValue]);
-    const handleFormSubmit = (data) => {
-      const formattedData = {
-        id_utilisateur: user.id,
-        type_de_conge: data.type_de_conge,
-        nombre_jour_conge: Number(data.nombre_jour_conge),
-        dateDebutAbsence: new Date(data.dateDebutAbsence).toISOString(),
-        dateFinAbsence: new Date(data.dateFinAbsence).toISOString(),
-        motif: data.motif || ''
-      };
-    
-      onSubmit(formattedData);
+  }, [typeDeConge, dateDebut, setValue, congeTypes]);
+
+  // Update congeTypes when user changes
+  useEffect(() => {
+    setCongeTypes(getInitialCongeTypes());
+  }, [user?.genre]);
+
+  const handleFormSubmit = (data) => {
+    const formattedData = {
+      id_utilisateur: user.id,
+      type_de_conge: data.type_de_conge,
+      nombre_jour_conge: Number(data.nombre_jour_conge),
+      dateDebutAbsence: new Date(data.dateDebutAbsence).toISOString(),
+      dateFinAbsence: new Date(data.dateFinAbsence).toISOString(),
+      motif: data.motif || ''
     };
+    
+    onSubmit(formattedData);
+  };
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className={styles.form}>
       <div className={styles.inputGroup}>
         <label className={styles.label}>Type de congé</label>
-        {/* <select
-          {...register('type_de_conge', { required: true })}
-          className={styles.input}
-          onChange={(e) => {
-            setSelectedTypeDeConge(e.target.value);
-            setValue('type_de_conge', e.target.value);
-          }}
-        >
-          <option value="">Sélectionnez un type de congé</option>
-          {Object.keys(congeTypes).filter(type => type !== '').map(type => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select> */}
         <select
           {...register("type_de_conge", { required: true })}
           className={styles.input}
@@ -277,16 +280,12 @@ export default function CongeForm({ conge, onSubmit, onClose }) {
             setValue("type_de_conge", e.target.value);
           }}
         >
-          <option key="default" value="">
-            Sélectionnez un type de congé
-          </option>
-          {Object.keys(congeTypes)
-            .filter((type) => type !== "")
-            .map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
+          <option value="">Sélectionnez un type de congé</option>
+          {Object.entries(congeTypes).map(([type, days]) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
         </select>
       </div>
 

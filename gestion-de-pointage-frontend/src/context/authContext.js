@@ -57,7 +57,6 @@ export const AuthProvider = ({ children }) => {
         genre: decoded.genre,
         role: decoded.role
       });
-      
       return true;
     } catch (error) {
       throw new Error('Login failed');
