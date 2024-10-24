@@ -1,34 +1,62 @@
-.logoutContainer {
+/* .logoutContainer {
     position: absolute;
     bottom: 2rem;
-    width: 100%;
+        width: 100%;
 }
-  .logoutButton {
-      display: flex;
-      font-size: 1.1rem;
-      align-items: center;
-      justify-content: flex-start;
-      width: 200px;
-      padding: 0.9rem 1.5rem;
-      background-color: #e74c3c;
-      color: #ecf0f1;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: fixed;
-      bottom: 2rem;
-      left: 2rem;
-      border-radius: 4px;
-  }
+.logoutButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    background-color: #e74c3c;
+    color: #ecf0f1;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 .logoutButton:hover {
     background-color: #c0392b;
 }
 
 .icon {
+    font-size: 1.2rem;
+}
+
+.expanded {
+    justify-content: flex-start;
+}
+
+.expanded .icon {
     margin-right: 0.5rem;
 }
-.confirmationDialog {
+
+.collapsed {
+    width: 60px;
+    padding: 0.75rem 0;
+}
+
+.collapsed span {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .logoutButton {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .logoutButton span {
+      display: inline;
+    }
+
+    .logoutButton .icon {
+      margin-right: 0.5rem;
+    }
+}.confirmationDialog {
     position: absolute;
     top: 100%;
     right: 0;
@@ -61,4 +89,40 @@
 .cancelButton {
     background-color: #f44336;
     color: white;
-}
+} */
+
+.logoutButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    width: 100%;
+    background-color: #c0392b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+    bottom: 0;
+  }
+  
+  .logoutButton:hover {
+    background-color: #e74c3c;
+  }
+  
+  .logoutButton .icon {
+    margin-right: 8px;
+  }
+  
+  .collapsed .icon {
+    margin-right: 0;
+  }
+  
+  .expanded {
+    justify-content: flex-start;
+  }
+  
+  .collapsed {
+    justify-content: center;
+  }
+  

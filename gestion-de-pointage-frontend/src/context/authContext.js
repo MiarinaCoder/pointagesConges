@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
           sessionId: decoded.sessionId, 
           prenom: decoded.prenom,
           email: decoded.email,
+          genre: decoded.genre,
           role: decoded.role
         });
       } catch (err) {
@@ -53,6 +54,7 @@ export const AuthProvider = ({ children }) => {
         sessionId: sessionId,
         prenom: decoded.prenom,
         email: decoded.email,
+        genre: decoded.genre,
         role: decoded.role
       });
       

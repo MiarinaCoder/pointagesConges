@@ -1,6 +1,9 @@
-const db = require("../config/db");
+const db = require('../config/db');
 
 const User = {
+  // updateResetToken: (email, resetToken, resetExpires) => {
+  //   return db.query('UPDATE Utilisateur SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE email = ?', [resetToken, resetExpires, email]);
+  // },
   findByEmail: (email) => {
     console.log(`Finding user with email: ${email}`);
     return db.query("SELECT * FROM utilisateur WHERE email = ?", [email]);
@@ -26,6 +29,9 @@ const User = {
     return db.query(
       "SELECT id,matriculation,nom,prenom,adresse,email,fonction,role,statusMatrimoniale FROM utilisateur"
     );
+  },
+  updatePassword: (email, newPassword) => {
+    return db.query('UPDATE Utilisateur SET motDePasse = ? WHERE email = ?', [newPassword, email]);
   },
 };
 

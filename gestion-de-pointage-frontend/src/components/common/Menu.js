@@ -1,127 +1,167 @@
-// 'use client';
+// "use client";
 
-// import { useState, useEffect } from 'react';
-// import Link from 'next/link';
-// import { useRouter, usePathname } from 'next/navigation';
-// import { FaHome, FaUsers, FaClock, FaCog, FaBars } from 'react-icons/fa';
-// import styles from '../../styles/components/Menu.module.css';
-// import LogoutButton from '../auth/LogoutButton';  
+// import { useState, useEffect, useContext } from "react";
+// import Link from "next/link";
+// import { useRouter, usePathname } from "next/navigation";
+// import { FaBars, FaTimes, FaHome, FaUsers, FaCog, FaClock } from "react-icons/fa";
+// import styles from "../../styles/components/Menu.module.css";
+// import LogoutButton from "../auth/LogoutButton";
+// import AuthContext from "@/context/authContext";
 
 // const menuItems = [
-//   { label: 'Profil', path: '/profil', icon: FaHome },
-//   { label: 'administrateur', path: '/administrateur', icon: FaUsers },
-//   { label: 'Rattrapages', path: '/rattrapages', icon: FaClock },
-//   { label: 'Parametres', path: '/parametres', icon: FaCog },
-//   { label: 'Dashboard', path: '/dashboard', icon: FaHome },
-//   { label: 'Penalites', path: '/penalites', icon: FaUsers },
+//   { label: "Absences", path: "/absences", icon: FaHome },
+//   { label: "Administrateur", path: "/administrateur", icon: FaUsers },
+//   { label: "Rattrapages", path: "/rattrapages", icon: FaClock },
+//   { label: "Parametres", path: "/parametres", icon: FaCog },
+//   { label: "Tableau de bord", path: "/dashboard", icon: FaHome },
+//   { label: "Penalites", path: "/penalites", icon: FaUsers },
 // ];
 
 // export default function Menu() {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [isExpanded, setIsExpanded] = useState(false);
 //   const router = useRouter();
 //   const pathname = usePathname();
+//   const { user, loading } = useContext(AuthContext);
+
+//   const toggleMenu = () => {
+//     setIsExpanded(!isExpanded);
+//     if (!isExpanded) {
+//       document.body.classList.add("menu-open");
+//     } else {
+//       document.body.classList.remove("menu-open");
+//     }
+//   };
 
 //   useEffect(() => {
-//     const token = localStorage.getItem('token');
-//     setIsAuthenticated(!!token);
-//   }, []);
+//     if (!loading && !user) {
+//       router.push("/");
+//     }
+//   }, [user, loading, router]);
 
-//   if (!isAuthenticated) {
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (!user) {
 //     return null;
 //   }
 
 //   return (
 //     <>
-//     <nav className={`${styles.menu} ${isOpen ? styles.open : ''}`}>
 //       <button
-//         className={styles.menuToggle}
-//         onClick={() => setIsOpen(!isOpen)}
-//         aria-expanded={isOpen}
+//         className={`${styles.menuToggle} ${isExpanded ? styles.expanded : ""}`}
+//         onClick={toggleMenu}
 //         aria-label="Toggle menu"
 //       >
-//         <FaBars />
+//         {isExpanded ? <FaTimes /> : <FaBars />}
 //       </button>
-//       <ul className={styles.menuItems}>
-//         {menuItems.map((item) => (
-//           <li key={item.path} className={pathname === item.path ? styles.active : ''}>
-//             <Link href={item.path}>
-//               <item.icon className={styles.icon} aria-hidden="true" />
-//               <span>{item.label}</span>
-//             </Link>
-//           </li>
-//         ))}
-//       </ul>
-//       <LogoutButton/>
-//     </nav>
-    
+
+//       {/* Menu navigation */}
+//       <nav className={`${styles.menu} ${isExpanded ? styles.expanded : ""}`}>
+//         <div className={styles.menuContent}>
+//           <div className={styles.userInfo}>
+//             <p className={styles.userName}>{user?.prenom || "Utilisateur"}</p>
+//           </div>
+//           <ul className={styles.menuItems}>
+//             {menuItems.map((item) => (
+//               <li
+//                 key={item.path}
+//                 className={pathname === item.path ? styles.active : ""}
+//               >
+//                 <Link href={item.path} onClick={toggleMenu}>
+//                   <item.icon className={styles.icon} aria-hidden="true" />
+//                   <span>{item.label}</span>
+//                 </Link>
+//               </li>
+//             ))}
+//           </ul>
+//         </div>
+//         {/* Bouton de déconnexion toujours visible en bas */}
+//         <div className={styles.logoutContainer}>
+//           <LogoutButton />
+//         </div>
+//       </nav>
+
+//       {isExpanded && <div className={styles.overlay} onClick={toggleMenu} />}
 //     </>
 //   );
 // }
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { FaHome, FaUsers, FaClock, FaCog, FaBars, FaUser } from 'react-icons/fa';
-import styles from '../../styles/components/Menu.module.css';
-import LogoutButton from '../auth/LogoutButton';
+import { useState, useEffect, useContext } from "react";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import { FaBars, FaTimes, FaHome, FaUsers, FaCog, FaClock } from "react-icons/fa";
+import styles from "../../styles/components/Menu.module.css";
+import LogoutButton from "../auth/LogoutButton";
+import AuthContext from "@/context/authContext";
 
 const menuItems = [
-  { label: 'absences', path: '/absences', icon: FaHome },
-  { label: 'administrateur', path: '/administrateur', icon: FaUsers },
-  { label: 'Rattrapages', path: '/rattrapages', icon: FaClock },
-  { label: 'Parametres', path: '/parametres', icon: FaCog },
-  { label: 'Tableau de bord', path: '/dashboard', icon: FaHome },
-  { label: 'Penalites', path: '/penalites', icon: FaUsers },
+  { label: "Congé", path: "/absences", icon: FaHome },
+  { label: "Administrateur", path: "/administrateur", icon: FaUsers },
+  { label: "Rattrapages", path: "/rattrapages", icon: FaClock },
+  { label: "Parametres", path: "/parametres", icon: FaCog },
+  { label: "Tableau de bord", path: "/dashboard", icon: FaHome },
+  { label: "Penalites", path: "/penalites", icon: FaUsers },
 ];
 
 export default function Menu() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userName, setUserName] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { user, loading } = useContext(AuthContext);
+
+  const toggleMenu = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
-    if (token) {
-      const storedUserName = localStorage.getItem('userName');
-      setUserName(storedUserName || 'Utilisateur');
+    if (!loading && !user) {
+      router.push("/");
     }
-  }, []);
+  }, [user, loading, router]);
 
-  if (!isAuthenticated) {
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
     return null;
   }
 
   return (
-    <nav className={`${styles.menu} ${isOpen ? styles.open : ''}`}>
+    <>
       <button
-        className={styles.menuToggle}
-        onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
+        className={`${styles.menuToggle}`}
+        onClick={toggleMenu}
         aria-label="Toggle menu"
       >
-        <FaBars />
+        {isExpanded ? <FaTimes /> : <FaBars />}
       </button>
-      <div className={styles.userInfo}>
-        <FaUser className={styles.userIcon} />
-        <p className={styles.userName}>{userName}</p>
-      </div>
-      <ul className={styles.menuItems}>
-        {menuItems.map((item) => (
-          <li key={item.path} className={pathname === item.path ? styles.active : ''}>
-            <Link href={item.path}>
-              <item.icon className={styles.icon} aria-hidden="true" />
-              <span>{item.label}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <LogoutButton/>
-    </nav>
+
+      <nav className={`${styles.menu} ${isExpanded ? styles.expanded : ""}`}>
+        <div className={styles.menuContent}>
+          <div className={styles.userInfo}>
+            <p className={styles.userName}>{user?.prenom || "Utilisateur"}</p>
+          </div>
+          <ul className={styles.menuItems}>
+            {menuItems.map((item) => (
+              <li
+                key={item.path}
+                className={pathname === item.path ? styles.active : ""}
+              >
+                <Link href={item.path} onClick={toggleMenu}>
+                  <item.icon className={styles.icon} aria-hidden="true" />
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <LogoutButton isExpanded={true} />
+      </nav>
+    </>
   );
 }

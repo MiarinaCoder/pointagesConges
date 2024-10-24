@@ -8,5 +8,6 @@ router.post('/login', [
   body('password').not().isEmpty().trim().escape()
 ], authController.login);
 
-module.exports = router;
+router.post('/mot-de-passe-oublie', authController.forgotPassword);
 
+module.exports = router;

@@ -171,7 +171,6 @@
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -220,15 +219,6 @@
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
-          </div>
-          <div className={styles.rememberMe}>
-            <input
-              type="checkbox"
-              id="rememberMe"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            <label htmlFor="rememberMe">Se souvenir de moi</label>
           </div>
           <button type="submit" className={styles.loginButton}>
             Se connecter

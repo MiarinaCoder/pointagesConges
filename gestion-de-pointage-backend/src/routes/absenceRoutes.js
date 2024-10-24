@@ -5,7 +5,8 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.use(authMiddleware);
 
-router.get('/', absencesController.getAllAbsences);
+router.get('/abs', absencesController.getAllAbsences);
+router.get('/conge', absencesController.getAllConges);
 router.get('/:id', absencesController.getAbsenceById);
 router.post('/', absencesController.createAbsence);
 router.put('/:id', absencesController.updateAbsence);

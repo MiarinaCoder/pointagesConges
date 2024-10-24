@@ -8,10 +8,10 @@ const ParametresTravail = {
 
   // Mettre à jour les paramètres
   update: (params) => {
-    const { tempsDebut, dureeJournee, seuilHeuresSupp, montantPenalite,heurePause } = params;
+    const { tempsDebutTravail, dureeJourneeTravail, seuilHeuresSupp, montantPenalite, heurePause } = params;
     return db.query(
-      'UPDATE parametrestravail SET tempsDebutTravail = ?, dureeJourneeTravail = ?, seuilHeuresSupp = ?, montantPenalite = ?,heurePause=?,dateModification=NOW()',
-      [tempsDebut, dureeJournee, seuilHeuresSupp, montantPenalite,heurePause]
+      'UPDATE parametrestravail SET tempsDebutTravail = ?, dureeJourneeTravail = ?, seuilHeuresSupp = ?, montantPenalite = ?, heurePause = ?, dateModification = NOW()',
+      [tempsDebutTravail, dureeJourneeTravail, seuilHeuresSupp, montantPenalite, heurePause]
     );
   }
 };

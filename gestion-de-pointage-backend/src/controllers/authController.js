@@ -80,6 +80,8 @@ const User=require('../models/User');
 const SessionsTravail=require('../models/sessionTravail')
 const { validationResult } = require("express-validator");
 const { format } = require("date-fns"); // Pour formater les dates
+const crypto = require('crypto');
+const sendEmail = require('../utils/sendEmail');
 
 // Amélioration du nombre de "salt rounds" pour le hashage des mots de passe
 const SALT_ROUNDS = 12;
@@ -130,6 +132,7 @@ exports.login = async (req, res) => {
         userId: utilisateur.id,
         email: utilisateur.email,
         role: utilisateur.role,
+        genre: utilisateur.genre,
         sessionId: sessionId, // On inclut le sessionId dans le token
       },
       process.env.JWT_SECRET, // Utiliser un secret JWT sécurisé via un fichier .env
@@ -144,6 +147,7 @@ exports.login = async (req, res) => {
       userId: utilisateur.id,
       sessionId: sessionId,
       role: utilisateur.role,
+      genre: utilisateur.genre,
       message: "Connexion réussie",
     });
   } catch (error) {
@@ -151,3 +155,25 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
+  exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    const newPassword = Math.random().toString(36).slice(-8); // Generate a random password
+
+    try {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const [result] = await User.updatePassword(email, hashedPassword);
+    
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      }
+
+      // Send email with new password
+      // ... (implement email sending logic here)
+
+      res.status(200).json({ message: 'Nouveau mot de passe envoyé par email' });
+    } catch (error) {
+      console.error('Erreur lors de la réinitialisation du mot de passe:', error);
+      res.status(500).json({ message: 'Erreur serveur lors de la réinitialisation du mot de passe' });
+    }
+  };
