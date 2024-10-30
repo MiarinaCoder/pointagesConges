@@ -93,13 +93,17 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import api from '@/services/api';
 import styles from './Parametres.module.css';
 import ParametresForm from '../../components/forms/ParametresFrom';
 import Layout from '../../components/layout/Layout';
+import AuthContext from '@/context/authContext';
 
 const Parametres = () => {
+  const { user } = useContext(AuthContext);
+  const router = useRouter();
   const [params, setParams] = useState({
     tempsDebutTravail: '',
     dureeJourneeTravail: '',
@@ -110,12 +114,20 @@ const Parametres = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchParameters();
-  }, []);
+    if (user?.role !== 'administrateur') {
+      router.push('/');
+    } else {
+      fetchParameters();
+    }
+  }, [user, router]);
+
+  if (user?.role !== 'administrateur') return null;
 
   const fetchParameters = async () => {
     try {
-      const response = await api.get('/parametres');
+      const response = await api.get('/parametres', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
       setParams(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des paramètres", error);
@@ -132,8 +144,9 @@ const Parametres = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/parametres', params);
-      // alert('Paramètres mis à jour avec succès');
+       await api.post('/parametres', params, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
       setIsModalOpen(false);
       fetchParameters();
     } catch (error) {

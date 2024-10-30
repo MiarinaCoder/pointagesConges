@@ -18,7 +18,7 @@ const app = express();
 // Update the CORS configuration
 app.use(cors({
     origin: '*', // This allows all origins
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed methods
     // credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
   }));

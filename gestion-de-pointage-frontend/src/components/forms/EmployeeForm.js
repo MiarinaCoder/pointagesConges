@@ -115,8 +115,8 @@ export default function EmployeeForm({ utilisateur, onSubmit, onClose }) {
             <input
               {...register("genre", { required: "Le genre est requis" })}
               type="radio"
-              value="feminin"
-              id="feminin"
+              value="féminin"
+              id="féminin"
             />
             <label htmlFor="feminin">Féminin</label>
           </div>

@@ -73,15 +73,15 @@
 //   }
 // };
 
-
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User=require('../models/User');
-const SessionsTravail=require('../models/sessionTravail')
+const User = require("../models/User");
+const SessionsTravail = require("../models/sessionTravail");
 const { validationResult } = require("express-validator");
 const { format } = require("date-fns"); // Pour formater les dates
-const crypto = require('crypto');
-const sendEmail = require('../utils/sendEmail');
+const crypto = require("crypto");
+// const sendEmail = require("../utils/sendEmail");
+const { sendEmail } = require("../services/emailService");
 
 // Amélioration du nombre de "salt rounds" pour le hashage des mots de passe
 const SALT_ROUNDS = 12;
@@ -120,10 +120,12 @@ exports.login = async (req, res) => {
     // Démarrer une nouvelle session de travail immédiatement après la connexion
     const currentTimestamp = new Date();
     const [result] = await SessionsTravail.create({
-              id_utilisateur: utilisateur.id,
-              heureDebut: currentTimestamp
-            });
-    const sessionId = result.insertId;
+      id_utilisateur: utilisateur.id,
+      heureDebut: currentTimestamp,
+    });
+
+    // Try these different approaches:
+    const sessionId = result[0]?.idSession || result[0]?.[0]?.idSession || result.insertId;
 
     // Générer un token JWT sécurisé avec le sessionId inclus dans le payload
     const token = jwt.sign(
@@ -156,24 +158,90 @@ exports.login = async (req, res) => {
   }
 };
 
-  exports.forgotPassword = async (req, res) => {
-    const { email } = req.body;
-    const newPassword = Math.random().toString(36).slice(-8); // Generate a random password
+// exports.forgotPassword = async (req, res) => {
+//   const { email } = req.body;
+//   const newPassword = Math.random().toString(36).slice(-8); // Generate a random password
 
-    try {
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      const [result] = await User.updatePassword(email, hashedPassword);
-    
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'Utilisateur non trouvé' });
-      }
+//   try {
+//     const hashedPassword = await bcrypt.hash(newPassword, 10);
+//     const [result] = await User.updatePassword(email, hashedPassword);
 
-      // Send email with new password
-      // ... (implement email sending logic here)
+//     if (result.affectedRows === 0) {
+//       return res.status(404).json({ message: "Utilisateur non trouvé" });
+//     }
 
-      res.status(200).json({ message: 'Nouveau mot de passe envoyé par email' });
-    } catch (error) {
-      console.error('Erreur lors de la réinitialisation du mot de passe:', error);
-      res.status(500).json({ message: 'Erreur serveur lors de la réinitialisation du mot de passe' });
-    }
-  };
+//     // Send email with new password
+//     // ... (implement email sending logic here)
+
+//     res.status(200).json({ message: "Nouveau mot de passe envoyé par email" });
+//   } catch (error) {
+//     console.error("Erreur lors de la réinitialisation du mot de passe:", error);
+//     res
+//       .status(500)
+//       .json({
+//         message: "Erreur serveur lors de la réinitialisation du mot de passe",
+//       });
+//   }
+// };
+
+// exports.forgotPassword = async (req, res) => {
+//   const { email, newPassword } = req.body; // Accept new password from request body
+
+//   try {
+//     const hashedPassword = await bcrypt.hash(newPassword, 10);
+//     await User.updatePassword(email, hashedPassword);
+
+//     // Send email confirming password change
+//     sendEmail(email, "Confirmation de changement de mot de passe", "Votre mot de passe a été changé avec succès.");
+
+//     res.status(200).json({ message: "Mot de passe changé avec succès" });
+//   } catch (error) {
+//     console.error("Erreur lors de la réinitialisation du mot de passe:", error);
+//     res.status(500).json({ message: "Erreur serveur lors de la réinitialisation du mot de passe" });
+//   }
+// };
+
+exports.requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = await User.requestPasswordReset(email);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Erreur lors de la demande de réinitialisation de mot de passe:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la demande de réinitialisation de mot de passe' });
+  }
+};
+
+exports.approvePasswordReset = async (req, res) => {
+  const { requestId } = req.params;
+  try {
+    await User.approvePasswordResetRequest(requestId);
+    res.status(200).json({ message: 'Demande de réinitialisation approuvée' });
+  } catch (error) {
+    console.error('Erreur lors de l\'approbation de la demande de réinitialisation de mot de passe:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de l\'approbation de la demande de réinitialisation de mot de passe' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await User.updatePassword(email, hashedPassword);
+    // res.status(200).json({ message: 'Mot de passe changé avec succès' });
+    sendEmail(email, "Confirmation de changement de mot de passe", "Votre mot de passe a été changé avec succès.");
+  } catch (error) {
+    console.error('Erreur lors de la réinitialisation du mot de passe:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la réinitialisation du mot de passe' });
+  }
+};
+
+exports.getAllPasswordResetRequests = async (req, res) => {
+  try {
+    const requests = await User.getAllPasswordResetRequests();
+    res.status(200).json(requests);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des demandes de réinitialisation de mot de passe:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la récupération des demandes de réinitialisation de mot de passe' });
+  }
+};

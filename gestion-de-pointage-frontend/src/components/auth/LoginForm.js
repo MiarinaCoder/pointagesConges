@@ -99,7 +99,6 @@
 // //   );
 // // }
 
-
 // // components/LoginForm.js
 // 'use client';
 
@@ -156,79 +155,103 @@
 //     </div>
 //   );
 // }
-  'use client';
+"use client";
 
-  import { useContext, useState } from 'react';
-  import { useRouter } from 'next/navigation';
-  import AuthContext from '../../context/authContext';
-  import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-  import styles from '../../styles/components/LoginForm.module.css';
+import { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import AuthContext from "../../context/authContext";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import styles from "../../styles/components/LoginForm.module.css";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
-  export default function LoginForm() {
-    const { login } = useContext(AuthContext);
-    const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+export default function LoginForm() {
+  const { login } = useContext(AuthContext);
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        await login(email, password);
-        router.push('/dashboard');
-      } catch (err) {
-        setError('Échec de la connexion');
-        console.error(err);
-      }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await login(email, password);
+      router.push("/dashboard");
+    } catch (err) {
+      setError("Échec de la connexion");
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    const togglePasswordVisibility = () => {
-      setShowPassword(!showPassword);
-    };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
-    return (
-      <div className={styles.loginContainer}>
-        <form onSubmit={handleSubmit} className={styles.loginForm}>
-          {/* <img src="/logo.png" alt="Logo" className={styles.logo} /> */}
-          <h2>Connexion</h2>
-          {error && <p className={styles.error}>{error}</p>}
-          <div className={styles.inputGroup}>
-            <FaUser className={styles.icon} />
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <FaLock className={styles.icon} />
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Mot de passe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button 
-              type="button" 
-              onClick={togglePasswordVisibility} 
-              className={styles.passwordToggle}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
-          <button type="submit" className={styles.loginButton}>
-            Se connecter
-          </button>
-          <div className={styles.additionalOptions}>
-            <button type="button" className={styles.forgotPassword}>
-              Mot de passe oublié ?
-            </button>
-          </div>
-        </form>
-      </div>
-    );
+  if (showForgotPassword) {
+    return <ForgotPasswordForm onBack={() => setShowForgotPassword(false)} />;
   }
+
+  return (
+    <div className={styles.loginContainer}>
+      <form onSubmit={handleSubmit} className={styles.loginForm}>
+        {/* <img src="/logo.png" alt="Logo" className={styles.logo} /> */}
+        <h2>Connexion</h2>
+        {error && <p className={styles.error}>{error}</p>}
+        <div className={styles.inputGroup}>
+          <FaUser className={styles.icon} />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className={styles.inputGroup}>
+          <FaLock className={styles.icon} />
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Mot de passe"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className={styles.passwordToggle}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
+        {/* <button type="submit" className={styles.loginButton}>
+          Se connecter
+        </button> */}
+        <button
+          className={`${styles.loginButton} ${
+            isSubmitting ? styles.loading : ""
+          }`}
+          disabled={isSubmitting}
+          type="submit"
+        >
+          {isSubmitting ? "" : "Se connecter"}
+        </button>
+        <div className={styles.additionalOptions}>
+          <button
+            type="button"
+            className={styles.forgotPassword}
+            onClick={() => setShowForgotPassword(true)}
+          >
+            Mot de passe oublié ?
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}

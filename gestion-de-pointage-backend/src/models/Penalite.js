@@ -24,6 +24,15 @@ const Penalite = {
   getPenaliteById: (id) => {
     return db.query("SELECT * FROM penalite WHERE idPenalite = ?", [id]);
   },
+  getPenalitesByUserId: (userId) => {
+    return db.query(
+      `SELECT p.*, u.nom, u.prenom 
+       FROM penalite p 
+       JOIN utilisateur u ON p.id_utilisateur = u.id 
+       WHERE p.id_utilisateur = ?`,
+      [userId]
+    );
+  }
 };
 
 module.exports = Penalite;

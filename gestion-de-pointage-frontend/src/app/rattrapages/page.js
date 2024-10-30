@@ -30,6 +30,20 @@ export default function Rattrapages() {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
   };
 
+  const fetchRattrapages = async () => {
+    try {
+      const endpoint = user?.role === 'administrateur' 
+        ? "/rattrapages"
+        : `/rattrapages/${user?.id}`;
+      const response = await api.get(endpoint,{
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setRattrapages(response.data);
+    } catch (error) {
+      console.error("Error fetching rattrapages:", error);
+    }
+  };
+
   useEffect(() => {
     // const fetchUserRole = async () => {
     //   try {
@@ -40,19 +54,9 @@ export default function Rattrapages() {
     //   }
     // };
 
-    const fetchRattrapages = async () => {
-      try {
-        const response = await api.get("/rattrapages");
-        console.log("Rattrapages data:", response.data);
-        setRattrapages(response.data);
-      } catch (error) {
-        console.error("Error fetching rattrapages:", error);
-      }
-    };
-
     // fetchUserRole();
     fetchRattrapages();
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,15 +67,14 @@ export default function Rattrapages() {
         reason: newRattrapage.reason,
       };
 
-      console.log("Sending data:", rattrapageData);
 
       const response = await api.post("/rattrapages", rattrapageData);
 
-      console.log("Response:", response.data);
 
-      // Rafraîchir la liste des rattrapages
-      const rattrapagesResponse = await api.get("/rattrapages");
-      setRattrapages(rattrapagesResponse.data);
+      // // Rafraîchir la liste des rattrapages
+      // const rattrapagesResponse = await api.get("/rattrapages");
+      // setRattrapages(rattrapagesResponse.data);
+      fetchRattrapages();
 
       // Réinitialiser le formulaire
       setNewRattrapage({ date: "", hours: "", reason: "", attachment: null });

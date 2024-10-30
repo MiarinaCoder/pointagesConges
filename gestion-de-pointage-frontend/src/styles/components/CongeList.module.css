@@ -49,3 +49,31 @@
 .actionButton:last-child {
   background-color: #dc3545;
 }
+
+.statusPending {
+  background-color: rgb(241, 214, 63);
+  color: #000;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+
+.statusRejected {
+  background-color: #ff4d4d;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.statusApproved {
+  background-color: #4CAF50;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 500;
+}

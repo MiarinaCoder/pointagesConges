@@ -2,8 +2,13 @@ const db = require('../config/db');
 const moment = require('moment');
 
 const SessionsTravail = {
+  // create: (session) => {
+  //   return db.query('INSERT INTO sessionTravail (id_utilisateur, heureDebut) VALUES (?, ?)', [session.id_utilisateur, session.heureDebut]);
+  // },
   create: (session) => {
-    return db.query('INSERT INTO sessionTravail (id_utilisateur, heureDebut) VALUES (?, ?)', [session.id_utilisateur, session.heureDebut]);
+    return db.query(`
+      CALL sp_create_session(?, ?)
+    `, [session.id_utilisateur, session.heureDebut]);
   },
   addSession: (session) => {
     const today = new Date();
@@ -53,18 +58,23 @@ const SessionsTravail = {
   // update: (idSession, session) => {
   //   return db.query('UPDATE sessionTravail SET heureFin = ?, heuresTravaillees = ? WHERE idSession = ?', [session.heureFin, session.heuresTravaillees, idSession]);
   // },
-  update: function(idSession, session) {
-    return db.query('SELECT heureDebut FROM sessionTravail WHERE idSession = ?', [idSession])
-      .then(([rows]) => {
-        if (!rows.length) {
-          throw new Error('Session non trouvée');
-        }
-        const debut = moment(rows[0].heureDebut);
-        const fin = moment(session.heureFin);
-        const duree = moment.duration(fin.diff(debut));
-        const heuresTravaillees = duree.asHours();
-        return db.query('UPDATE sessionTravail SET heureFin = ?, heuresTravaillees = ? WHERE idSession = ?', [session.heureFin, heuresTravaillees, idSession]);
-      });
+
+  // update: function(idSession, session) {
+  //   return db.query('SELECT heureDebut FROM sessionTravail WHERE idSession = ?', [idSession])
+  //     .then(([rows]) => {
+  //       if (!rows.length) {
+  //         throw new Error('Session non trouvée');
+  //       }
+  //       const debut = moment(rows[0].heureDebut);
+  //       const fin = moment(session.heureFin);
+  //       const duree = moment.duration(fin.diff(debut));
+  //       const heuresTravaillees = duree.asHours();
+  //       return db.query('UPDATE sessionTravail SET heureFin = ?, heuresTravaillees = ? WHERE idSession = ?', [session.heureFin, heuresTravaillees, idSession]);
+  //     });
+  // },
+
+  update: (idSession, session) => {
+    return db.query('CALL sp_update_session(?, ?)', [idSession, session.heureFin]);
   },
   getSessionTravail: (id_utilisateur) => {
     return db.query('SELECT * FROM sessionTravail WHERE id_utilisateur = ?', [id_utilisateur]);

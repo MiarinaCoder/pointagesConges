@@ -3,9 +3,12 @@ const router = express.Router();
 const penaliteController = require('../controllers/penaliteController');
 const authMiddleware = require('../middleware/authMiddleware');
 
-router.get('/', authMiddleware, penaliteController.getAllPenalites);
-router.post('/', authMiddleware, penaliteController.createPenalite);
-router.put('/:id', authMiddleware, penaliteController.updatePenalite);
-router.delete('/:id', authMiddleware, penaliteController.deletePenalite);
+router.use(authMiddleware);
+
+router.get('/',  penaliteController.getAllPenalites);
+router.post('/',  penaliteController.createPenalite);
+router.put('/:id',  penaliteController.updatePenalite);
+router.delete('/:id',  penaliteController.deletePenalite);
+router.get('/user/:userId',  penaliteController.getPenalitesByUserId);
 
 module.exports = router;

@@ -7,7 +7,6 @@ const moment = require("moment");
 
 exports.addRattrapage = async (req, res) => {
     try {
-      console.log('Received data:', req.body);
       const { date, hours, reason } = req.body;
       const id_utilisateur = req.user.id;
   
@@ -129,6 +128,17 @@ exports.getAllRattrapages = async (req, res) => {
   try {
     const rattrapages = await Rattrapages.getAllRattrapages();
     res.json(rattrapages);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+};
+
+exports.getRattrapageByUserId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const rattrapage = await Rattrapages.getRattrapagesByUserId(id);
+    res.json(rattrapage);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

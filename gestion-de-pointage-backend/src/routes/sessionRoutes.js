@@ -4,7 +4,9 @@ const router = express.Router();
 const sessionController = require('../controllers/sessionController');
 const authMiddleware = require('../middleware/authMiddleware');
 
-router.put('/:id_session/terminer', authMiddleware, sessionController.terminerSession);
-router.get('/:id_utilisateur', authMiddleware, sessionController.getSessionsByUser);
+router.use(authMiddleware);
+
+router.put('/:id_session/terminer',  sessionController.terminerSession);
+router.get('/:id_utilisateur',  sessionController.getSessionsByUser);
 
 module.exports = router;

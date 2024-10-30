@@ -46,3 +46,13 @@ exports.deletePenalite = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur lors de la suppression de la pénalité' });
   }
 };
+
+exports.getPenalitesByUserId = async (req, res) => {
+  try {
+    const [penalites] = await Penalite.getPenalitesByUserId(req.params.userId);
+    res.status(200).json(penalites);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des pénalités:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};

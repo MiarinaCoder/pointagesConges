@@ -3,9 +3,12 @@ const router = express.Router();
 const rattrapageController = require('../controllers/rattrapageController');
 const authMiddleware=require('../middleware/authMiddleware')
 
-router.post('/', authMiddleware, rattrapageController.addRattrapage);
-router.put('/:id', authMiddleware,rattrapageController.updateRattrapage);
-router.delete('/:id', authMiddleware, rattrapageController.deleteRattrapage);
-router.get('/', authMiddleware, rattrapageController.getAllRattrapages);
+router.use(authMiddleware);
+
+router.post('/',  rattrapageController.addRattrapage);
+router.put('/:id', rattrapageController.updateRattrapage);
+router.delete('/:id',  rattrapageController.deleteRattrapage);
+router.get('/',  rattrapageController.getAllRattrapages);
+router.get('/:id',  rattrapageController.getRattrapageByUserId);
 
 module.exports = router;

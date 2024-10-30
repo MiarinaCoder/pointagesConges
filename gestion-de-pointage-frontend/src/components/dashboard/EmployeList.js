@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import UtilisateurForm from '../forms/EmployeeForm';
 import Modal from '../common/Modal';
 import ModalConfirmation from '../common/ModalConfirmation';
 import styles from '../../styles/components/EmployeList.module.css';
 import api from "@/services/api";
+import AuthContext from '@/context/authContext';
 
 export default function EmployeeList() {
+  const { user } = useContext(AuthContext);
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -14,20 +16,25 @@ export default function EmployeeList() {
 
   useEffect(() => {
     fetchUtilisateurs();
-  }, []);
+  }, [user]);
 
   const fetchUtilisateurs = async () => {
     try {
-      const response = await api.get('/users', {
+      const endpoint = user?.role === 'administrateur' 
+        ? '/users'
+        : `/users/${user.id}`;
+        
+      const response = await api.get(endpoint, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      setUtilisateurs(response.data);
+      setUtilisateurs(user?.role === 'administrateur' ? response.data : [response.data]);
     } catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
     }
   };
 
   const handleCreate = async (newUtilisateur) => {
+    if (user?.role !== 'administrateur') return;
     try {
       await api.post('/users', newUtilisateur, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -53,12 +60,13 @@ export default function EmployeeList() {
   };
 
   const openDeleteConfirmation = (utilisateur) => {
+    if (user?.role !== 'administrateur') return;
     setUtilisateurToDelete(utilisateur);
     setIsConfirmModalOpen(true);
   };
 
   const handleDelete = async () => {
-    if (utilisateurToDelete) {
+    if (utilisateurToDelete && user?.role === 'administrateur') {
       try {
         await api.delete(`/users/${utilisateurToDelete.id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -84,15 +92,20 @@ export default function EmployeeList() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Liste des utilisateurs</h2>
-      <button className={styles.addButton} onClick={() => openModal()}>
-        Ajouter un utilisateur
-      </button>
+      <h2 className={styles.title}>
+        {user?.role === 'administrateur' ? 'Liste des utilisateurs' : 'Mon profil'}
+      </h2>
+      {user?.role === 'administrateur' && (
+        <button className={styles.addButton} onClick={() => openModal()}>
+          Ajouter un utilisateur
+        </button>
+      )}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <UtilisateurForm 
           utilisateur={selectedUtilisateur} 
           onSubmit={selectedUtilisateur ? handleUpdate : handleCreate} 
           onClose={closeModal}
+          isadministrateur={user?.role === 'administrateur'}
         />
       </Modal>
       <ModalConfirmation 
@@ -115,7 +128,7 @@ export default function EmployeeList() {
             <th>Adresse</th>
             <th>Genre</th>
             <th>Status matrimoniale</th>
-            <th>Actions</th>
+            {user?.role === 'administrateur' && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -129,14 +142,16 @@ export default function EmployeeList() {
               <td>{utilisateur.adresse}</td>
               <td>{utilisateur.genre}</td>
               <td>{utilisateur.statusMatrimoniale}</td>
-              <td>
-                <button onClick={() => openModal(utilisateur)} className={styles.actionButton}>
-                  Modifier
-                </button>
-                <button onClick={() => openDeleteConfirmation(utilisateur)} className={styles.actionButton}>
-                  Supprimer
-                </button>
-              </td>
+              {user?.role === 'administrateur' && (
+                <td>
+                  <button onClick={() => openModal(utilisateur)} className={styles.actionButton}>
+                    Modifier
+                  </button>
+                  <button onClick={() => openDeleteConfirmation(utilisateur)} className={styles.actionButton}>
+                    Supprimer
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

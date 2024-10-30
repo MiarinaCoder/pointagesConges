@@ -8,12 +8,30 @@ const Absence = {
       JOIN utilisateur u ON a.id_utilisateur = u.id WHERE type='congé'
     `);
   },
+  getCongesByUserId: (userId) => {
+    return db.query(
+      `SELECT a.*, u.nom as nom_utilisateur, u.prenom as prenom_utilisateur 
+       FROM absence a 
+       JOIN utilisateur u ON a.id_utilisateur = u.id 
+       WHERE a.id_utilisateur = ? AND a.type = 'conge'`,
+      [userId]
+    );
+  },
   findAllAbsence: () => {
     return db.query(`
       SELECT a.*, u.nom AS nom_utilisateur, u.prenom AS prenom_utilisateur
       FROM absence a
       JOIN utilisateur u ON a.id_utilisateur = u.id WHERE type='absence'
     `);
+  },
+  getAbsencesByUserId: (userId) => {
+    return db.query(
+      `SELECT a.*, u.nom as nom_utilisateur, u.prenom as prenom_utilisateur 
+       FROM absence a 
+       JOIN utilisateur u ON a.id_utilisateur = u.id 
+       WHERE a.id_utilisateur = ? AND a.type = 'absence'`,
+      [userId]
+    );
   },
   findById: (id) => {
     return db.query("SELECT * FROM absence WHERE idAbsence = ?", [id]);
@@ -49,8 +67,6 @@ const Absence = {
         );
       }
     }
-    console.log("Type de congé sélectionné:", absence.type_de_conge);
-    console.log("Nombre de jours de congé:", absence.nombre_jour_conge);
     return db.query(
       "INSERT INTO absence (id_utilisateur, dateDebutAbsence, dateFinAbsence, type_de_conge, nombre_jour_conge, motif,type) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
@@ -108,12 +124,17 @@ const Absence = {
     );
     
     return updateResult[0];
-  },  delete: (id) => {
+  },  
+  delete: (id) => {
     return db.query("DELETE FROM absence WHERE idAbsence = ?", [id]);
   },
   findByUserId: (userId) => {
     return db.query("SELECT * FROM absence WHERE id_utilisateur = ?", [userId]);
   },
+  updateStatus: async(statut,id) => {
+    const updateResultStatus = await db.query("UPDATE absence SET statut = ? WHERE idAbsence = ?", [statut,id]);
+    return updateResultStatus[0];
+  }
 };
 
 module.exports = Absence;

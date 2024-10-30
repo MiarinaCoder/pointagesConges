@@ -8,6 +8,17 @@ router.post('/login', [
   body('password').not().isEmpty().trim().escape()
 ], authController.login);
 
-router.post('/mot-de-passe-oublie', authController.forgotPassword);
+router.post('/request-reset', [
+  body('email').isEmail().normalizeEmail()
+], authController.requestPasswordReset);
+
+router.post('/approve-reset/:requestId', authController.approvePasswordReset);
+
+router.post('/reset-password', [
+  body('email').isEmail().normalizeEmail(),
+  body('newPassword').isLength({ min: 6 })
+], authController.resetPassword);
+
+router.get('/all-forget-password-requests', authController.getAllPasswordResetRequests);
 
 module.exports = router;

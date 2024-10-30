@@ -10,6 +10,15 @@ exports.getAllAbsences = async (req, res) => {
       }
 };
 
+exports.getAbsencesByUserId = async (req, res) => {
+  try {
+    const [absences] = await Absence.getAbsencesByUserId(req.params.userId);
+    res.status(200).json(absences);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des absences:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
 
 exports.getAllConges = async (req, res) => {
     try {
@@ -20,6 +29,17 @@ exports.getAllConges = async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur lors de la récupération des utilisateurs' });
       }
 };
+
+exports.getCongesByUserId = async (req, res) => {
+  try {
+    const [conges] = await Absence.getCongesByUserId(req.params.userId);
+    res.status(200).json(conges);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des congés:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
 exports.getAbsenceById = async (req, res) => {
     try {
         const [absence] = await Absence.findById(req.params.id);
@@ -66,5 +86,18 @@ exports.deleteAbsence = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la suppression de l\'absence', error });
+  }
+};
+
+exports.updateStatus= async (req, res) => {
+  try {
+    const result = await Absence.updateStatus(req.body.statut,req.params.id);
+    if (result.affectedRows > 0) {
+      res.json({ message: 'Absence updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Absence not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };

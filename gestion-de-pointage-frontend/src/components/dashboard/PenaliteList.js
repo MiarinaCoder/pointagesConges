@@ -5,7 +5,7 @@ import ModalConfirmation from '../common/ModalConfirmation';
 import styles from '../../styles/components/PenaliteList.module.css';
 import api from "@/services/api";
 
-export default function PenaliteList() {
+export default function PenaliteList({ userId }) {
   const [penalites, setPenalites] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -14,11 +14,15 @@ export default function PenaliteList() {
 
   useEffect(() => {
     fetchPenalites();
-  }, []);
+  }, [userId]);
 
   const fetchPenalites = async () => {
     try {
-      const response = await api.get('/penalites', {
+      const endpoint = userId 
+        ? `/penalites/user/${userId}`
+        : '/penalites';
+        
+      const response = await api.get(endpoint, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setPenalites(response.data);
@@ -28,6 +32,7 @@ export default function PenaliteList() {
   };
 
   const handleCreate = async (newPenalite) => {
+    if (userId) return; // Only admin can create
     try {
       await api.post('/penalites', newPenalite, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -40,6 +45,7 @@ export default function PenaliteList() {
   };
 
   const handleUpdate = async (updatedPenalite) => {
+    if (userId) return; // Only admin can update
     try {
       await api.put(`/penalites/${updatedPenalite.idPenalite}`, updatedPenalite, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -53,12 +59,13 @@ export default function PenaliteList() {
   };
 
   const openDeleteConfirmation = (penalite) => {
+    if (userId) return; // Only admin can delete
     setPenaliteToDelete(penalite);
     setIsConfirmModalOpen(true);
   };
 
   const handleDelete = async () => {
-    if (penaliteToDelete) {
+    if (penaliteToDelete && !userId) {
       try {
         await api.delete(`/penalites/${penaliteToDelete.idPenalite}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -73,6 +80,7 @@ export default function PenaliteList() {
   };
 
   const openModal = (penalite = null) => {
+    if (userId) return; // Only admin can open modal
     setSelectedPenalite(penalite);
     setIsModalOpen(true);
   };
@@ -84,10 +92,14 @@ export default function PenaliteList() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Liste des pénalités</h2>
-      <button className={styles.addButton} onClick={() => openModal()}>
-        Ajouter une pénalité
-      </button>
+      <h2 className={styles.title}>
+        {userId ? 'Mes pénalités' : 'Liste des pénalités'}
+      </h2>
+      {!userId && (
+        <button className={styles.addButton} onClick={() => openModal()}>
+          Ajouter une pénalité
+        </button>
+      )}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <PenaliteForm 
           penalite={selectedPenalite} 
@@ -111,7 +123,7 @@ export default function PenaliteList() {
             <th>Montant</th>
             <th>Date</th>
             <th>Approuvé</th>
-            <th>Actions</th>
+            {!userId && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -121,14 +133,16 @@ export default function PenaliteList() {
               <td>{penalite.montant}</td>
               <td>{new Date(penalite.date).toLocaleDateString()}</td>
               <td>{penalite.estApprouve ? 'Oui' : 'Non'}</td>
-              <td>
-                <button onClick={() => openModal(penalite)} className={styles.actionButton}>
-                  Modifier
-                </button>
-                <button onClick={() => openDeleteConfirmation(penalite)} className={styles.actionButton}>
-                  Supprimer
-                </button>
-              </td>
+              {!userId && (
+                <td>
+                  <button onClick={() => openModal(penalite)} className={styles.actionButton}>
+                    Modifier
+                  </button>
+                  <button onClick={() => openDeleteConfirmation(penalite)} className={styles.actionButton}>
+                    Supprimer
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

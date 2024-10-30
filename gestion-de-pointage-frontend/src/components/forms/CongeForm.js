@@ -192,7 +192,7 @@ export default function CongeForm({ conge, onSubmit, onClose }) {
   const [selectedTypeDeConge, setSelectedTypeDeConge] = useState(
     conge?.type_de_conge || ""
   );
-console.log(user.genre);
+
   // Initialize congeTypes based on user gender
   const getInitialCongeTypes = () => {
     const types = {
@@ -221,6 +221,7 @@ console.log(user.genre);
     defaultValues: {
       type_de_conge: conge?.type_de_conge || "",
       nombre_jour_conge: conge?.nombre_jour_conge || 0,
+      // nombre_jour_conge: conge?.type_de_conge === "congé standard" ? 2.5 : (conge?.nombre_jour_conge || 0),
       dateDebutAbsence: conge?.dateDebutAbsence
         ? new Date(conge.dateDebutAbsence).toISOString().split("T")[0]
         : "",
@@ -233,6 +234,7 @@ console.log(user.genre);
 
   const typeDeConge = watch("type_de_conge");
   const dateDebut = watch("dateDebutAbsence");
+  const nombreJourConge = watch("nombre_jour_conge");
 
   const calculateEndDate = (startDate, days) => {
     if (!startDate || !days) return "";
@@ -241,19 +243,33 @@ console.log(user.genre);
     return date.toISOString().split("T")[0];
   };
 
+  // useEffect(() => {
+  //   if (typeDeConge && dateDebut) {
+  //     const jours = congeTypes[typeDeConge];
+  //     setValue("nombre_jour_conge", jours);
+  //     const newEndDate = calculateEndDate(dateDebut, jours);
+  //     if (newEndDate) setValue("dateFinAbsence", newEndDate);
+  //   }
+  // }, [typeDeConge, dateDebut, setValue, congeTypes]);
+
   useEffect(() => {
     if (typeDeConge && dateDebut) {
-      const jours = congeTypes[typeDeConge];
-      setValue("nombre_jour_conge", jours);
+      const jours = typeDeConge === "congé standard" ? nombreJourConge : congeTypes[typeDeConge];
       const newEndDate = calculateEndDate(dateDebut, jours);
       if (newEndDate) setValue("dateFinAbsence", newEndDate);
     }
-  }, [typeDeConge, dateDebut, setValue, congeTypes]);
+  }, [typeDeConge, dateDebut, nombreJourConge, setValue, congeTypes]);
 
   // Update congeTypes when user changes
   useEffect(() => {
     setCongeTypes(getInitialCongeTypes());
   }, [user?.genre]);
+
+  useEffect(() => {
+    if (typeDeConge && congeTypes[typeDeConge] !== undefined) {
+      setValue("nombre_jour_conge", congeTypes[typeDeConge]);
+    }
+  }, [typeDeConge, setValue, congeTypes]);
 
   const handleFormSubmit = (data) => {
     const formattedData = {

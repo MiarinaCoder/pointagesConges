@@ -92,25 +92,42 @@
 import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { FaBars, FaTimes, FaHome, FaUsers, FaCog, FaClock } from "react-icons/fa";
+import { 
+  FaBars, 
+  FaTimes,
+  FaChartBar, 
+  FaCalendarTimes, 
+  FaCalendarAlt, 
+  FaSync, 
+  FaExclamationTriangle,
+  FaUserShield,
+  FaCog 
+} from "react-icons/fa";
 import styles from "../../styles/components/Menu.module.css";
 import LogoutButton from "../auth/LogoutButton";
 import AuthContext from "@/context/authContext";
-
-const menuItems = [
-  { label: "Congé", path: "/absences", icon: FaHome },
-  { label: "Administrateur", path: "/administrateur", icon: FaUsers },
-  { label: "Rattrapages", path: "/rattrapages", icon: FaClock },
-  { label: "Parametres", path: "/parametres", icon: FaCog },
-  { label: "Tableau de bord", path: "/dashboard", icon: FaHome },
-  { label: "Penalites", path: "/penalites", icon: FaUsers },
-];
 
 export default function Menu() {
   const [isExpanded, setIsExpanded] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { user, loading } = useContext(AuthContext);
+
+  const menuItems = user?.role === 'administrateur' ? [
+    { label: "Tableau de bord", path: "/dashboard", icon: FaChartBar },
+    { label: "Absences", path: "/absences", icon: FaCalendarTimes },
+    { label: "Congés", path: "/conge", icon: FaCalendarAlt },
+    { label: "Rattrapages", path: "/rattrapages", icon: FaSync },
+    { label: "Pénalités", path: "/penalites", icon: FaExclamationTriangle },
+    { label: "Administrateur", path: "/administrateur", icon: FaUserShield },
+    { label: "Paramètres", path: "/parametres", icon: FaCog }
+  ] : [
+    { label: "Tableau de bord", path: "/dashboard", icon: FaChartBar },
+    { label: "Absences", path: "/absences", icon: FaCalendarTimes },
+    { label: "Congés", path: "/conge", icon: FaCalendarAlt },
+    { label: "Rattrapages", path: "/rattrapages", icon: FaSync },
+    { label: "Pénalités", path: "/penalites", icon: FaExclamationTriangle }
+  ];
 
   const toggleMenu = () => {
     setIsExpanded(!isExpanded);

@@ -27,6 +27,15 @@ const Rattrapages = {
       .then(([results, fields]) => results)
       .catch(error => { throw error });
   },
+  getRattrapagesByUserId: (userId) => {
+    return db.query(
+      `SELECT r.*, u.nom, u.prenom 
+       FROM rattrapages r
+       JOIN utilisateur u ON r.id_utilisateur = u.id 
+       WHERE r.id_utilisateur = ?`,
+      [userId]
+    );
+  }
 };
 
 module.exports = Rattrapages;
