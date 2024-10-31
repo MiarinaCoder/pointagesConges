@@ -136,9 +136,10 @@ exports.getAllRattrapages = async (req, res) => {
 
 exports.getRattrapageByUserId = async (req, res) => {
   try {
-    const { id } = req.params;
-    const rattrapage = await Rattrapages.getRattrapagesByUserId(id);
-    res.json(rattrapage);
+    const userId = req.params.userId;
+    console.log("Received id:", userId);
+    const rattrapage = await Rattrapages.getRattrapagesByUserId(userId);
+    res.json(rattrapage[0]);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

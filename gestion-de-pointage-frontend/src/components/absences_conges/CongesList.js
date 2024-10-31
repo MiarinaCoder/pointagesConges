@@ -159,7 +159,7 @@ import Modal from "../common/Modal";
 import ModalConfirmation from "../common/ModalConfirmation";
 import styles from "../../styles/components/congeList.module.css";
 import api from "@/services/api";
-import ActionButtonsContainer from "../common/ActionButtonsContainer";
+import ActionDropdown from "../common/ActionDropdown";
 
 export default function CongeList({ userId, isAdmin }) {
   const [conges, setConges] = useState([]);
@@ -345,16 +345,16 @@ export default function CongeList({ userId, isAdmin }) {
               <td>{conge.type_de_conge}</td>
               <td>{conge.nombre_jour_conge}</td>
               <td>
-                <ActionButtonsContainer>
+                <ActionDropdown>
                   <button
                     onClick={() => openModal(conge)}
-                    className={styles.actionButton}
+                    className={styles.modify}
                   >
                     Modifier
                   </button>
                   <button
                     onClick={() => openDeleteConfirmation(conge)}
-                    className={styles.actionButton}
+                    className={styles.delete}
                   >
                     Supprimer
                   </button>
@@ -365,6 +365,7 @@ export default function CongeList({ userId, isAdmin }) {
                         onClick={() =>
                           handleStatusUpdate(conge.idAbsence, "approuvee")
                         }
+                        className={styles.approve}
                       >
                         Approuver
                       </button>
@@ -372,12 +373,13 @@ export default function CongeList({ userId, isAdmin }) {
                         onClick={() =>
                           handleStatusUpdate(conge.idAbsence, "rejete")
                         }
+                        className={styles.reject}
                       >
                         Rejeter
                       </button>
                     </>
                   )}
-                </ActionButtonsContainer>
+                </ActionDropdown>
               </td>
             </tr>
           ))}

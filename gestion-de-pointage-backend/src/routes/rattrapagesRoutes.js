@@ -9,6 +9,6 @@ router.post('/',  rattrapageController.addRattrapage);
 router.put('/:id', rattrapageController.updateRattrapage);
 router.delete('/:id',  rattrapageController.deleteRattrapage);
 router.get('/',  rattrapageController.getAllRattrapages);
-router.get('/:id',  rattrapageController.getRattrapageByUserId);
+router.get('/:userId',  rattrapageController.getRattrapageByUserId);
 
 module.exports = router;

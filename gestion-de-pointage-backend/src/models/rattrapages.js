@@ -22,19 +22,22 @@ const Rattrapages = {
       ]);
   },
   getAllRattrapages: () => {
-    const query = 'SELECT * FROM rattrapages';
+    const query = `SELECT r.*, u.nom, u.prenom 
+    FROM rattrapages r
+    JOIN utilisateur u ON r.id_utilisateur = u.id`;
     return db.query(query)
       .then(([results, fields]) => results)
       .catch(error => { throw error });
   },
   getRattrapagesByUserId: (userId) => {
-    return db.query(
-      `SELECT r.*, u.nom, u.prenom 
+    const query= `SELECT r.*, u.nom, u.prenom 
        FROM rattrapages r
        JOIN utilisateur u ON r.id_utilisateur = u.id 
-       WHERE r.id_utilisateur = ?`,
-      [userId]
-    );
+       WHERE r.id_utilisateur = ?`;
+       return db.query(
+        query,
+        [userId]
+      );
   }
 };
 

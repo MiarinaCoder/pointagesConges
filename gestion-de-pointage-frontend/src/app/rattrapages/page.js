@@ -21,7 +21,6 @@ export default function Rattrapages() {
   const [isManager, setIsManager] = useState(false);
   const { user } = useContext(AuthContext);
 
-
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
@@ -33,8 +32,8 @@ export default function Rattrapages() {
   const fetchRattrapages = async () => {
     try {
       const endpoint = user?.role === 'administrateur' 
-        ? "/rattrapages"
-        : `/rattrapages/${user?.id}`;
+      ? "/rattrapages"
+      : `/rattrapages/${user?.id}`;    
       const response = await api.get(endpoint,{
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -168,30 +167,34 @@ export default function Rattrapages() {
       <div className={styles.rattrapagesList}>
         {rattrapages
           .slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE)
-          .map((rattrapage) => (
-            <div key={rattrapage.id_rattrapage} className={styles.rattrapageItem}>
-              <div className={styles.rattrapageInfo}>
-                <p><strong>Utilisateur ID: {rattrapage.id_utilisateur}</strong></p>
-                <p>Date: {new Date(rattrapage.date_penalite).toLocaleDateString()}</p>
-                <p>Heures à rattraper: {rattrapage.heures_a_rattraper}</p>
-                <p>Type de demande: {rattrapage.type_demande}</p>
-                <p>Statut: <span className={styles[rattrapage.statut]}>{rattrapage.statut}</span></p>
-              </div>
-              {isManager && rattrapage.statut === 'pending' && (
-                <div className={styles.actionButtons}>
-                  <button onClick={() => handleApprove(rattrapage.id_rattrapage)} className={styles.approveButton}>
-                    <FaCheck /> Approuver
-                  </button>
-                  <button onClick={() => handleReject(rattrapage.id_rattrapage)} className={styles.rejectButton}>
-                    <FaTimes /> Rejeter
-                  </button>
+          .map((rattrapage, index) => {
+            // Ensure we have a unique key by using array index as fallback
+            const uniqueKey = rattrapage.id_rattrapage || `rattrapage-${index}`
+            return (
+              <div key={uniqueKey} className={styles.rattrapageItem}>
+                <div className={styles.rattrapageInfo}>
+                  <p><strong>Utilisateur : {rattrapage.nom} {rattrapage.prenom}</strong></p>
+                  <p>Date: {new Date(rattrapage.date_penalite).toLocaleDateString()}</p>
+                  <p>Heures à rattraper: {rattrapage.heures_a_rattraper}</p>
+                  <p>Type de demande: {rattrapage.type_demande}</p>
+                  <p>Statut: <span className={styles[rattrapage.statut]}>{rattrapage.statut}</span></p>
                 </div>
-              )}
-            </div>
-        ))}
+                {isManager && rattrapage.statut === 'pending' && (
+                  <div className={styles.actionButtons}>
+                    <button onClick={() => handleApprove(rattrapage.id_rattrapage)} className={styles.approveButton}>
+                      <FaCheck /> Approuver
+                    </button>
+                    <button onClick={() => handleReject(rattrapage.id_rattrapage)} className={styles.rejectButton}>
+                      <FaTimes /> Rejeter
+                    </button>
+                  </div>
+                )}
+              </div>
+            )
+        })}
       </div>
-    ) : (
-      <p>Aucun rattrapage à afficher.</p>
+
+    ) : (      <p>Aucun rattrapage à afficher.</p>
     )}
     <div className={styles.pageNavigation}>
       <button onClick={handlePrevPage} disabled={currentPage === 0}>
