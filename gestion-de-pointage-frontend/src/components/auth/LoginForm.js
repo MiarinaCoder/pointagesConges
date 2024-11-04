@@ -154,10 +154,10 @@
 //       </form>
 //     </div>
 //   );
-// }
+// }, useEffect
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useState} from "react";
 import { useRouter } from "next/navigation";
 import AuthContext from "../../context/authContext";
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
@@ -169,25 +169,144 @@ export default function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [location, setLocation] = useState(null);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // useEffect(() => {
+  //   // Récupérer la localisation de l'utilisateur
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         const { latitude, longitude } = position.coords;
+  //         setLocation({ latitude, longitude });
+  //       },
+  //       (error) => {
+  //         console.error("Erreur de localisation :", error);
+  //       }
+  //     );
+  //   }
+  // }, []);
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (isSubmitting || !location) return;
+  //   setIsSubmitting(true);
+  //   try {
+  //     await login(email, password,location);
+  //     router.push("/dashboard");
+  //   } catch (err) {
+  //     setError("Échec de la connexion");
+  //     console.error(err);
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (isSubmitting) return;
+  //   setIsSubmitting(true);
+  //   setError('');
+
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       async (position) => {
+  //         try {
+  //           const latitude = position.coords.latitude;
+  //           const longitude = position.coords.longitude;
+
+  //           // Logs des données avant l'appel
+  //           console.log('Tentative de connexion avec:', {
+  //             email,
+  //             passwordLength: password.length,
+  //             coordinates: { latitude, longitude }
+  //           });
+
+  //           const loginResponse = await login(email, password, {latitude, longitude});
+  //           console.log('Réponse du serveur:', loginResponse);
+
+  //           // router.push("/dashboard");
+
+  //           // Check for successful login response
+  //           if (loginResponse && loginResponse.token) {
+  //             console.log('Login successful, redirecting...');
+  //             router.push("/dashboard");
+  //           } else {
+  //             setError('Données de connexion invalides');
+  //           }
+  //         } catch (err) {
+  //           // Log détaillé de l'erreur
+  //           console.error('Détails de l\'erreur:', {
+  //             message: err.message,
+  //             status: err.response?.status,
+  //             data: err.response?.data
+  //           });
+
+  //           setError(err.message || "Échec de la connexion");
+  //         } finally {
+  //           setIsSubmitting(false);
+  //         }
+  //       },
+  //       (geoError) => {
+  //         console.error("Erreur détaillée de géolocalisation:", {
+  //           code: geoError.code,
+  //           message: geoError.message
+  //         });
+  //         setError("Veuillez activer la géolocalisation pour vous connecter");
+  //         setIsSubmitting(false);
+  //       },
+  //       // (error) => {
+  //       //   console.error("Erreur de géolocalisation:", error);
+  //       //   setError("Veuillez activer la géolocalisation pour vous connecter");
+  //       //   setIsSubmitting(false);
+  //       // },
+  //       {
+  //         enableHighAccuracy: true,
+  //         timeout: 10000,
+  //         maximumAge: 0
+  //       }
+  //     );
+  //   } else {
+  //     setError("Votre navigateur ne supporte pas la géolocalisation");
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
+    setError('');
+
     try {
-      await login(email, password);
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0
+        });
+      });
+
+      const loginResult = await login(email, password, {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
+
+      console.log('Login result:', loginResult);
       router.push("/dashboard");
+      
     } catch (err) {
-      setError("Échec de la connexion");
-      console.error(err);
+      console.log('Submit error:', err);
+      setError(err.message || 'Erreur de connexion');
     } finally {
       setIsSubmitting(false);
     }
-  };
+};
+
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

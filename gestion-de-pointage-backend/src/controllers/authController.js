@@ -77,23 +77,75 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const SessionsTravail = require("../models/sessionTravail");
+const LieuxTravail = require("../models/lieuxTravail");
 const { validationResult } = require("express-validator");
 const { format } = require("date-fns"); // Pour formater les dates
 const crypto = require("crypto");
 // const sendEmail = require("../utils/sendEmail");
 const { sendEmail } = require("../services/emailService");
+const { haversineDistance } = require('../utils/geoutils');
+
 
 // Amélioration du nombre de "salt rounds" pour le hashage des mots de passe
 const SALT_ROUNDS = 12;
 
-exports.login = async (req, res) => {
-  // Validation des erreurs d'email et mot de passe
+exports.login = async (req, res) => {  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password } = req.body;
+  const { email, password, latitude, longitude } = req.body;
+
+  // Validate coordinates
+  if (!latitude || !longitude) {
+    console.log('Missing coordinates:', { latitude, longitude });
+    return res.status(400).json({
+      success: false,
+      message: 'Les coordonnées GPS sont requises'
+    });
+  }
+
+  const userLat = parseFloat(latitude);
+  const userLon = parseFloat(longitude);
+
+  if (isNaN(userLat) || isNaN(userLon)) {
+    console.log('Invalid coordinate format:', { latitude, longitude });
+    return res.status(400).json({
+      success: false,
+      message: 'Format des coordonnées GPS invalide'
+    });
+  }
+  // Validation des erreurs d'email et mot de passe
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return res.status(400).json({ errors: errors.array() });
+  // }
+
+  //   // At the beginning of your login handler
+  //   if (!req.body.latitude || !req.body.longitude) {
+  //     console.log('Coordonnées manquantes dans la requête:', req.body.latitude, req.body.longitude);
+  //     return res.status(400).json({
+  //     success: false,
+  //     message: 'Les coordonnées GPS sont requises pour la connexion'
+  //   });
+  //   }
+
+  // const userLat = parseFloat(req.body.latitude);
+  // const userLon = parseFloat(req.body.longitude);
+
+  // if (isNaN(userLat) || isNaN(userLon)) {
+  //   console.log('Format de coordonnées invalide:', {
+  //     latitude: req.body.latitude,
+  //     longitude: req.body.longitude
+  //   });
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: 'Format des coordonnées GPS invalide'
+  //   });
+  // }
+
+  // const { email, password } = req.body; // Coordonnées envoyées dans le corps de la requête
 
   try {
     const [rows] = await User.findByEmail(email);
@@ -116,6 +168,46 @@ exports.login = async (req, res) => {
         .status(401)
         .json({ message: "Email ou mot de passe incorrect" });
     }
+
+    // Vérification de la localisation
+    const [lieux] = await LieuxTravail.getAllLieux();
+    const lieuValide = lieux.some((lieu) => {
+      const lieuLat = parseFloat(lieu.latitude);
+      const lieuLon = parseFloat(lieu.longitude);
+
+      // Add validation before calculation
+      if (!lieuLat || !lieuLon) {
+        console.log('Invalid coordinates detected:', {
+          user: { lat: userLat, lon: userLon },
+          lieu: { lat: lieuLat, lon: lieuLon }
+        });
+        return false;
+      }
+
+    const distance = haversineDistance(userLat, userLon, lieuLat, lieuLon);
+    console.log(`Distance: ${distance}m, Lieu: ${lieu.nom}, Coordonnées utilisateur: [${latitude}, ${longitude}], Coordonnées lieu: [${lieu.latitude}, ${lieu.longitude}]`);
+      // return distance <= lieu.rayon; // On compare avec le rayon autorisé
+      if (distance > lieu.rayon) {
+        console.log(`Position non autorisée - Distance: ${(distance/1000).toFixed(2)}km, Lieu: ${lieu.nom}, Coordonnées utilisateur: [${latitude}, ${longitude}], Coordonnées lieu: [${lieu.latitude}, ${lieu.longitude}]`);
+        return false;
+      }
+      return true;
+    });
+
+        // // Vérification de la localisation
+        // const [lieux] = await LieuxTravail.getAllLieux();
+        // const lieuValide = lieux.some((lieu) => {
+        //   const distance = haversineDistance(latitude, longitude, lieu.latitude, lieu.longitude);
+        //   return distance <= 0.01; // On compare avec 10 mètres (0.01 km)
+        // });
+    
+
+    if (!lieuValide) {
+      return res.status(403).json({ message: "Vous n'êtes pas dans un lieu de travail autorisé.",
+      success: false,
+    });
+    }
+
 
     // Démarrer une nouvelle session de travail immédiatement après la connexion
     const currentTimestamp = new Date();

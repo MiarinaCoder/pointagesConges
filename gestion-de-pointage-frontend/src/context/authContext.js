@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [isAuthenticated,setIsAuthenticated]=useState(false);
 
   // Vérifier le token existant lors du chargement initial
   useEffect(() => {
@@ -39,29 +40,106 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Fonction de login
-  const login = async (email, password) => {
-    try {
-      const response = await api.post('/auth/login', { email, password });
-      const { token, sessionId } = response.data;
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('sessionId', sessionId);
+  // const login = async (email, password, location) => {
+  //   try {
+  //     // Add request logging
+  //     console.log('Login request:', { email, location });
       
-      const decoded = jwt_decode(token);
-      setUser({ 
-        token, 
-        id: decoded.userId,
-        sessionId: sessionId,
-        prenom: decoded.prenom,
-        email: decoded.email,
-        genre: decoded.genre,
-        role: decoded.role
+  //     const response = await api.post('/auth/login', { email, password, latitude:location.latitude, longitude:location.longitude
+        
+  //     },{
+  //         // Add proper headers
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         }
+  //     });
+      
+  //     // if (!response.data.success) {
+  //     //   throw new Error(response.data.message);
+  //     // }
+  //   // Add response logging
+  //   console.log('Server response:', response);
+
+  //   if (response.data && response.data.token) {
+  //     const { token, sessionId } = response.data;
+
+  //     localStorage.setItem('token', token);
+  //     localStorage.setItem('sessionId', sessionId);
+      
+  //     const decoded = jwt_decode(token);
+  //     setUser({ 
+  //       token, 
+  //       id: decoded.userId,
+  //       sessionId: sessionId,
+  //       prenom: decoded.prenom,
+  //       email: decoded.email,
+  //       genre: decoded.genre,
+  //       role: decoded.role
+  //     });
+  //     return { success: true, message };
+  //   } else {
+  //     throw new Error('Invalid response format');
+  //   }
+  // } catch (error) {
+  //   // Enhanced error handling
+  //   const errorMessage = error.response?.data?.message || 'Erreur lors de la connexion';
+  //   const errorStatus = error.response?.status;
+    
+  //   throw {
+  //     message: errorMessage,
+  //     status: errorStatus,
+  //     data: error.response?.data
+  //   };
+  // }
+
+  //   // } catch (error) {
+  //   //   const errorMessage = error.response?.data?.message || 'Erreur de connexion';
+  //   //   throw new Error(errorMessage);
+  //   // }
+  // };
+
+  const login = async (email, password, location) => {
+    try {
+      const response = await api.post('/auth/login', {
+        email,
+        password,
+        latitude: location.latitude,
+        longitude: location.longitude
       });
-      return true;
+  
+      console.log('Raw response:', response);
+  
+      if (!response.data || !response.data.token) {
+        throw new Error('Invalid response format');
+      }
+  
+      // Set all required data in localStorage
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('sessionStart', response.data.sessionStart);
+      localStorage.setItem('sessionId', response.data.sessionId.toString());
+      localStorage.setItem('user', JSON.stringify({
+        id: response.data.userId,
+        email,
+        role: response.data.role,
+        prenom: response.data.prenom
+      }));
+      
+      setUser({
+        id: response.data.userId,
+        email,
+        role: response.data.role,
+        prenom: response.data.prenom
+      });
+      setIsAuthenticated(true);
+  
+      return response.data;
     } catch (error) {
-      throw new Error('Login failed');
+      console.log('Login error:', error);
+      throw error;
     }
   };
+  
+
 
   // Fonction de déconnexion
   const logout = async () => {

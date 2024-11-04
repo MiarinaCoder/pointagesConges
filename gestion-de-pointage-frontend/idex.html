@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Récupérer la Position Actuelle</title>
+</head>
+<body>
+    <h1>Récupérer votre Position Actuelle</h1>
+    <button id="getLocation">Obtenir ma position</button>
+    <p id="output"></p>
+
+    <script>
+        document.getElementById('getLocation').onclick = function() {
+            if (navigator.geolocation) {
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        console.log("Position obtenue :", position); // Log de la position
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        document.getElementById('output').innerText = `Votre position actuelle est : Latitude: ${latitude}, Longitude: ${longitude}`;
+                    },
+                    (error) => {
+                        console.log("Erreur de géolocalisation :", error); // Log de l'erreur
+                        document.getElementById('output').innerText = `Erreur lors de la récupération de la position : ${error.message}`;
+                    },
+                    options
+                );
+            } else {
+                document.getElementById('output').innerText = "La géolocalisation n'est pas prise en charge par ce navigateur.";
+            }
+        };
+    </script>
+</body>
+</html>
