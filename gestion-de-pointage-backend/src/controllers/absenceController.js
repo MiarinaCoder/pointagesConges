@@ -100,4 +100,28 @@ exports.updateStatus= async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
+  };
+  
+exports.getAbsencesByPeriod = async (req, res) => {
+  try {
+    console.log(req.body);
+    const { period, offset } = req.body;
+    const [absences] = await Absence.getAbsencesByPeriod(period, parseInt(offset));
+    res.status(200).json(absences);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération des absences", error });
+  }
+};
+
+exports.getAbsencesByPeriodWhereUser = async (req, res) => {
+  try {
+    const {userId} = req.params;
+    const { period, offset} = req.body;
+    console.log(userId);
+    const [absences] = await Absence.getAbsencesByPeriodWhereUser(userId, period, parseInt(offset));
+    res.status(200).json(absences);
+  } catch (error) {
+    console.error("Erreur détaillée:", error);
+    res.status(500).json({ message: "Erreur lors de la récupération des absences", error });
+  }
 };

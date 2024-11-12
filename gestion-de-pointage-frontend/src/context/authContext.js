@@ -25,15 +25,19 @@ export const AuthProvider = ({ children }) => {
           token, 
           id: decoded.userId,
           sessionId: decoded.sessionId, 
+          sessionStart: decoded.sessionStart,
+          nom: decoded.nom,
           prenom: decoded.prenom,
           email: decoded.email,
           genre: decoded.genre,
           role: decoded.role
         });
+        setIsAuthenticated(true);
       } catch (err) {
         console.error('Invalid token', err);
         localStorage.removeItem('token');
         localStorage.removeItem('sessionId');
+        setIsAuthenticated(false);
       }
     }
     setLoading(false);
@@ -121,7 +125,8 @@ export const AuthProvider = ({ children }) => {
         id: response.data.userId,
         email,
         role: response.data.role,
-        prenom: response.data.prenom
+        prenom: response.data.prenom,
+        nom: response.data.nom  
       }));
       
       setUser({
@@ -156,6 +161,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('token');
       localStorage.removeItem('sessionId');
       setUser(null);
+      setIsAuthenticated(false);
       router.push('/login');
     } catch (error) {
       console.error('Failed to logout', error);
@@ -163,7 +169,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading ,isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

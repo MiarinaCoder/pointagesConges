@@ -9,60 +9,82 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 2000;
 }
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
 
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
+  .modalContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    min-width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
 
-.modalContent {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+  .modalHeader {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
 
-.modalTitle {
-  color: #333;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-}
+  .modalTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+  }
 
-.modalBody {
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 16px;
-}
+  .modalBody {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
 
-.modalActions {
-  display: flex;
-  justify-content: flex-end;
-}
+  .modalFooter {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
 
-.cancelButton, .confirmButton {
-  padding: 10px 20px;
-  margin-left: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
+  .button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 120px;
+  }
 
-.cancelButton {
-  background-color: #ccc;
-  color: #333;
-}
+  .confirmButton {
+    background-color: #e74c3c;
+    color: white;
+  }
 
-.confirmButton {
-  color: white;
-}
+  .confirmButton:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+  }
+
+  .cancelButton {
+    background-color: #95a5a6;
+    color: white;
+  }
+
+  .cancelButton:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-1px);
+  }
+  

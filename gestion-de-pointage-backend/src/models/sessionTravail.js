@@ -1,5 +1,4 @@
 const db = require('../config/db');
-const moment = require('moment');
 
 const SessionsTravail = {
   // create: (session) => {
@@ -92,6 +91,9 @@ const SessionsTravail = {
 
   //   return totalHeuresTravaillees;
   // },
+  getHeureDebut: (sessionId) => {
+    return db.query('SELECT heureDebut FROM sessionTravail WHERE idSession = ?', [sessionId]);
+  },
 };
 
 module.exports = SessionsTravail;

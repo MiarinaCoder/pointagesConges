@@ -1,210 +1,469 @@
 .rattrapagesContainer {
-  max-width: 800px;
-  max-height: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding-top: 20px;
+  padding: 2rem;
+}
+
+.pageHeader {
+  margin-bottom: 2rem;
 }
 
 .title {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 10px;
-  margin-top: 0%;
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.rattrapageForm {
+.actionBar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 10px;
-  background-color: #f5f5f5;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.rattrapageForm input {
-  flex: 1;
-  min-width: 120px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.submitButton {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 5px;
-  transition: background-color 0.3s;
+  margin-bottom: 2rem;
+  gap: 1rem;
 }
 
-.submitButton:hover {
-  background-color: #45a049;
+.searchBar {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.searchBar input {
+  width: 100%;
+  padding: 0.8rem 2.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.filterSelect {
+  padding: 0.8rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  min-width: 200px;
+  background-color: white;
 }
 
 .rattrapagesList {
   display: grid;
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.rattrapageItem {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.rattrapageCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.rattrapageCard:hover {
+  transform: translateY(-4px);
+}
+
+.cardHeader {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 720px;
-  height: 17vh;
-  overflow: auto;
 }
 
-.rattrapageInfo p {
-  margin: 5px 0;
+.cardHeader h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
 }
 
-.actionButtons {
-  display: flex;
-  gap: 10px;
-}
-
-.approveButton,
-.rejectButton {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.statusBadge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
   font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.statusBadge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.statusBadge.approved {
+  background: #d4edda;
+  color: #155724;
+}
+
+.statusBadge.rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.cardBody {
+  padding: 1rem;
+}
+
+.cardBody p {
+  margin: 0.5rem 0;
+  color: #495057;
+}
+
+.cardFooter {
+  padding: 1rem;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.viewDetailsButton {
   display: flex;
   align-items: center;
-  gap: 5px;
-  transition: background-color 0.3s;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.viewDetailsButton:hover {
+  background: #0056b3;
+}
+
+.adminActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.approveButton, .rejectButton {
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .approveButton {
-  background-color: #4caf50;
+  background: #28a745;
+  color: white;
+}
+
+.rejectButton {
+  background: #dc3545;
   color: white;
 }
 
 .approveButton:hover {
-  background-color: #45a049;
-}
-
-.rejectButton {
-  background-color: #f44336;
-  color: white;
+  background: #218838;
 }
 
 .rejectButton:hover {
-  background-color: #d32f2f;
+  background: #c82333;
 }
 
-.pending {
-  color: #ffa000;
-}
-
-.approved {
-  color: #4caf50;
-}
-
-.rejected {
-  color: #f44336;
-}
-
-@media (max-width: 600px) {
-  .rattrapageForm {
-    flex-direction: column;
-  }
-
-  .rattrapageItem {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .actionButtons {
-    margin-top: 10px;
-  }
-}
-
-/* Ajoutez ces styles à votre fichier CSS existant */
-
-.fileInput {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-}
-
-.hiddenFileInput {
-  font-size: 100px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-}
-
-.fileInputLabel {
-  background-color: #f0f0f0;
-  color: #333;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.fileInputLabel:hover {
-  background-color: #e0e0e0;
-}
-
-.attachmentLink {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.attachmentLink:hover {
-  text-decoration: underline;
-}
-
-.rattrapagesContainer {
-  /* ... vos autres styles ... */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.pageNavigation {
+.pagination {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
-.pageNavigation button {
-  background-color: #007bff;
-  color: white;
+.pageButton {
+  padding: 0.6rem 1.2rem;
   border: none;
-  padding: 10px 20px;
-  margin: 0 10px;
-  border-radius: 5px;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease;
 }
 
-.pageNavigation button:disabled {
-  background-color: #ccc;
+.pageButton:disabled {
+  background: #ccc;
   cursor: not-allowed;
 }
 
-.pageNavigation button:not(:disabled):hover {
-  background-color: #0056b3;
+.pageInfo {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.detailItem {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.detailItem label {
+  display: block;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.closeButton {
+  width: 100%;
+  padding: 0.8rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.closeButton:hover {
+  background: #5a6268;
+}
+
+@media (max-width: 768px) {
+  .actionBar {
+    flex-direction: column;
+  }
+  
+  .searchBar {
+    max-width: 100%;
+  }
+  
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formSection {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.formTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.rattrapageForm {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.inputWrapper input,
+.inputWrapper textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.inputWrapper input:focus,
+.inputWrapper textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.helpText {
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.fileInputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.customFileInput {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  background: #f8f9fa;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.customFileInput:hover {
+  border-color: #007bff;
+  background: #e9ecef;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.resetButton {
+  padding: 0.8rem 1.5rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.resetButton:hover {
+  background: #5a6268;
+}
+
+.submitButton {
+  padding: 0.8rem 1.5rem;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.3s ease;
+}
+
+.submitButton:hover {
+  background: #218838;
+}
+
+@media (max-width: 768px) {
+  .formSection {
+    padding: 1rem;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .formActions button {
+    width: 100%;
+  }
+}
+
+.newRequestSection {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.newRequestButton {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 1.2rem 2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+}
+
+.newRequestButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+  background: linear-gradient(135deg, #218838, #1ba385);
+}
+
+.buttonContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.buttonIcon {
+  font-size: 1.5rem;
+}
+
+.buttonText {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.buttonHint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .newRequestButton {
+    padding: 1rem 1.5rem;
+  }
+  
+  .buttonText {
+    font-size: 1rem;
+  }
 }

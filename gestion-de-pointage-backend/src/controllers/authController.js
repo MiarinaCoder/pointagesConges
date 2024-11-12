@@ -222,12 +222,14 @@ exports.login = async (req, res) => {
     // Générer un token JWT sécurisé avec le sessionId inclus dans le payload
     const token = jwt.sign(
       {
+        nom: utilisateur.nom,
         prenom: utilisateur.prenom,
         userId: utilisateur.id,
         email: utilisateur.email,
         role: utilisateur.role,
         genre: utilisateur.genre,
         sessionId: sessionId, // On inclut le sessionId dans le token
+        sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
       },
       process.env.JWT_SECRET, // Utiliser un secret JWT sécurisé via un fichier .env
       { expiresIn: "8h", algorithm: "HS256" } // Configuration d'une expiration de 8 heures et algorithme sécurisé
@@ -237,6 +239,7 @@ exports.login = async (req, res) => {
     res.json({
       token,
       sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
+      nom: utilisateur.nom,
       prenom: utilisateur.prenom,
       userId: utilisateur.id,
       sessionId: sessionId,

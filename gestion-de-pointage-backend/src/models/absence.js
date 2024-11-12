@@ -134,6 +134,64 @@ const Absence = {
   updateStatus: async(statut,id) => {
     const updateResultStatus = await db.query("UPDATE absence SET statut = ? WHERE idAbsence = ?", [statut,id]);
     return updateResultStatus[0];
+  },
+  getAbsencesByPeriod: async(period, offset)=> {
+    let query = `
+      SELECT a.*, u.nom, u.prenom 
+      FROM absence a
+      JOIN utilisateur u ON a.id_utilisateur = u.id
+      WHERE 1=1 AND  a.type = 'absence'
+    `;
+
+    switch (period) {
+      case 'today':
+        query += ` AND DATE(a.dateDebutAbsence) = DATE_SUB(CURDATE(), INTERVAL ? DAY)`;
+        break;
+      case 'week':
+        query += ` AND YEARWEEK(a.dateDebutAbsence, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL ? WEEK), 1)`;
+        break;
+      case 'month':
+        query += ` AND DATE_FORMAT(a.dateDebutAbsence, '%Y-%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL ? MONTH), '%Y-%m')`;
+        break;
+    }
+
+    return await db.query(query, [offset]);
+  },
+ 
+  getAbsencesByPeriodWhereUser: async( userId, period, offset)=> {
+    // Validate and set default values
+    const validUserId = userId || null;
+    const validOffset = offset || 0;
+    const validPeriod = period || 'month';
+
+    let params = [validUserId];
+
+
+    let query = `
+      SELECT a.*, u.nom, u.prenom 
+      FROM absence a
+      JOIN utilisateur u ON a.id_utilisateur = u.id
+      WHERE 1=1 AND  a.type = 'absence' AND a.id_utilisateur = ?
+    `;
+    // if (period) {
+    switch (validPeriod) {
+      case 'today':
+        query += ` AND DATE(a.dateDebutAbsence) = DATE_SUB(CURDATE(), INTERVAL ? DAY)`;
+        params.push(validOffset);
+        break;
+      case 'week':
+        query += ` AND YEARWEEK(a.dateDebutAbsence, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL ? WEEK), 1)`;
+        params.push(validOffset);
+        break;
+      case 'month':
+        query += ` AND DATE_FORMAT(a.dateDebutAbsence, '%Y-%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL ? MONTH), '%Y-%m')`;
+        params.push(validOffset);
+        break;
+    }
+  // }
+    
+    const mimi= await db.query(query, params);
+    return mimi;
   }
 };
 

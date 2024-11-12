@@ -18,5 +18,7 @@ router.get('/conge/user/:userId', absencesController.getCongesByUserId);
 
 //modifier le status
 router.patch('/conge/status/:id', absencesController.updateStatus);
+router.post('/period', absencesController.getAbsencesByPeriod);
+router.post('/period/:userId', absencesController.getAbsencesByPeriodWhereUser);
 
 module.exports = router;

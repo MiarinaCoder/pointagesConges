@@ -285,7 +285,7 @@ export default function LoginForm() {
       const position = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
-          timeout: 20000,
+          timeout: 200000,
           maximumAge: 0
         });
       });

@@ -33,3 +33,14 @@ exports.getSessionsByUser = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur lors de la selection de l\'utilisateur' });
   }
 };
+
+exports.getHeureDebut= async (req, res) => {
+  const { sessionId } = req.params;
+  try {
+    const ui=await SessionsTravail.getHeureDebut(sessionId);
+    res.status(200).json({ ui });
+  } catch (error) {
+    console.error('Erreur lors de l\'affichage selon id l\'utilisateur:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de recuperation de heureDebut' });
+  }
+};

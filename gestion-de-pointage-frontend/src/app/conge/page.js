@@ -10,7 +10,7 @@ export default function Conges() {
 
   return (
     <Layout>
-      <h1>{user?.role === 'administrateur' ? 'Gestion des Congés' : 'Mes Congés'}</h1>
+      {/* <h1>{user?.role === 'administrateur' ? 'Gestion des Congés' : 'Mes Congés'}</h1> */}
       <CongeList userId={user?.role === 'employe' ? user.id : null} isAdmin={user?.role === 'administrateur'} />
     </Layout>
   );

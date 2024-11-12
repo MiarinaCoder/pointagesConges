@@ -63,17 +63,33 @@
 
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import Modal from "../common/ModalConfirmation";
 import styles from "../../styles/components/LogoutButton.module.css";
-import modalStyles from "../../styles/components/Modal.module.css";
 import { FaSignOutAlt } from "react-icons/fa";
 import api from "../../services/api";
 
 export default function LogoutButton({ isExpanded }) {
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Réinitialiser l'état lors du changement de route
+  useEffect(() => {
+    const shouldShowText = isExpanded || windowWidth <= 768;
+    if (shouldShowText) {
+      document.documentElement.style.setProperty('--logout-text-display', 'inline-block');
+    }
+  }, [pathname, isExpanded, windowWidth]);
 
   const handleLogoutClick = () => {
     setShowConfirmation(true);
@@ -89,10 +105,8 @@ export default function LogoutButton({ isExpanded }) {
       if (response.status === 200) {
         localStorage.removeItem("token");
         localStorage.removeItem("sessionStart");
-        localStorage.removeItem("id_session");
+        localStorage.removeItem("sessionId");
         router.push("/");
-      } else {
-        console.error("Failed to end session");
       }
     } catch (error) {
       console.error("Error ending session:", error);
@@ -108,9 +122,10 @@ export default function LogoutButton({ isExpanded }) {
       <button
         onClick={handleLogoutClick}
         className={`${styles.logoutButton} ${isExpanded ? styles.expanded : styles.collapsed}`}
+        data-expanded={isExpanded}
       >
         <FaSignOutAlt className={styles.icon} />
-        {isExpanded && <span>Déconnexion</span>}
+        <span className={styles.logoutText}>Déconnexion</span>
       </button>
 
       <Modal
@@ -121,7 +136,7 @@ export default function LogoutButton({ isExpanded }) {
         confirmText="Déconnexion"
         confirmButtonColor="#e74c3c"
       >
-        <div className={modalStyles.modalBody}>
+        <div className={styles.modalBody}>
           <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
         </div>
       </Modal>

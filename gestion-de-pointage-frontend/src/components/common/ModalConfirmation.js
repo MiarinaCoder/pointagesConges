@@ -1,29 +1,41 @@
-import React from 'react';
 import styles from '../../styles/components/Modal.module.css';
 
-const Modal = ({ isOpen, onClose, title, children, onConfirm, confirmText, confirmButtonColor }) => {
+export default function Modal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  children,
+  confirmText = 'Confirmer',
+  confirmButtonColor
+}) {
   if (!isOpen) return null;
-
-  const confirmButtonStyle = {
-    backgroundColor: confirmButtonColor || '#0000ff',
-  };
 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        <h2 className={styles.modalTitle}>{title}</h2>
-        <div className={styles.modalBody}>{children}</div>
-        <div className={styles.modalActions}>
-          <button onClick={onClose} className={styles.cancelButton}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>{title}</h2>
+        </div>
+        <div className={styles.modalBody}>
+          {children}
+        </div>
+        <div className={styles.modalFooter}>
+          <button 
+            className={`${styles.button} ${styles.cancelButton}`}
+            onClick={onClose}
+          >
             Annuler
           </button>
-          <button onClick={onConfirm} className={styles.confirmButton} style={confirmButtonStyle}>
+          <button 
+            className={`${styles.button} ${styles.confirmButton}`}
+            onClick={onConfirm}
+            style={confirmButtonColor ? { backgroundColor: confirmButtonColor } : {}}
+          >
             {confirmText}
           </button>
         </div>
       </div>
     </div>
   );
-};
-
-export default Modal;
+}

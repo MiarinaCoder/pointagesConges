@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { FaSearch, FaPlus, FaEdit, FaTrash, FaFilter } from 'react-icons/fa';
 import UtilisateurForm from '../forms/EmployeeForm';
 import Modal from '../common/Modal';
 import ModalConfirmation from '../common/ModalConfirmation';
-import styles from '../../styles/components/EmployeList.module.css';
+import styles from '../../styles/components/PenaliteList.module.css';
 import api from "@/services/api";
 import AuthContext from '@/context/authContext';
 
@@ -13,6 +14,8 @@ export default function EmployeeList() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedUtilisateur, setSelectedUtilisateur] = useState(null);
   const [utilisateurToDelete, setUtilisateurToDelete] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState('all');
 
   useEffect(() => {
     fetchUtilisateurs();
@@ -90,16 +93,88 @@ export default function EmployeeList() {
     setSelectedUtilisateur(null);
   };
 
+  const filteredUtilisateurs = utilisateurs.filter(utilisateur => {
+    const matchesSearch = Object.values(utilisateur)
+      .join(' ')
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesRole = filterRole === 'all' || utilisateur.role === filterRole;
+    return matchesSearch && matchesRole;
+  });
+
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>
-        {user?.role === 'administrateur' ? 'Liste des utilisateurs' : 'Mon profil'}
-      </h2>
-      {user?.role === 'administrateur' && (
-        <button className={styles.addButton} onClick={() => openModal()}>
-          Ajouter un utilisateur
-        </button>
-      )}
+    <div>
+      <div className={styles.toolBar}>
+        <div className={styles.searchBar}>
+          <FaSearch className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Rechercher un utilisateur..."
+            className={styles.searchInput}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className={styles.filterSection}>
+          <FaFilter />
+          <select 
+            className={styles.filterSelect}
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value)}
+          >
+            <option value="all">Tous les rôles</option>
+            <option value="administrateur">Administrateur</option>
+            <option value="employe">Employé</option>
+          </select>
+        </div>
+
+        {user?.role === 'administrateur' && (
+          <button className={styles.addButton} onClick={() => openModal()}>
+            <FaPlus /> Ajouter un utilisateur
+          </button>
+        )}
+      </div>
+
+      <div className={styles.penalitesGrid}>
+        {filteredUtilisateurs.map(utilisateur => (
+          <div key={utilisateur.id} className={styles.penaliteCard}>
+            <div className={styles.cardHeader}>
+              <h3>{utilisateur.matriculation}</h3>
+              <span className={`${styles.status} ${styles[utilisateur.role]}`}>
+                {utilisateur.role}
+              </span>
+            </div>
+            
+            <div className={styles.cardBody}>
+              <p><strong>Nom:</strong> {utilisateur.nom} {utilisateur.prenom}</p>
+              <p><strong>Email:</strong> {utilisateur.email}</p>
+              <p><strong>Fonction:</strong> {utilisateur.fonction}</p>
+              <p><strong>Adresse:</strong> {utilisateur.adresse}</p>
+              <p><strong>Genre:</strong> {utilisateur.genre}</p>
+              <p><strong>Status:</strong> {utilisateur.statusMatrimoniale}</p>
+            </div>
+
+            {user?.role === 'administrateur' && (
+              <div className={styles.cardActions}>
+                <button 
+                  className={styles.editButton}
+                  onClick={() => openModal(utilisateur)}
+                >
+                  <FaEdit /> Modifier
+                </button>
+                <button 
+                  className={styles.deleteButton}
+                  onClick={() => openDeleteConfirmation(utilisateur)}
+                >
+                  <FaTrash /> Supprimer
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <UtilisateurForm 
           utilisateur={selectedUtilisateur} 
@@ -108,6 +183,7 @@ export default function EmployeeList() {
           isadministrateur={user?.role === 'administrateur'}
         />
       </Modal>
+
       <ModalConfirmation 
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
@@ -117,45 +193,6 @@ export default function EmployeeList() {
       >
         <p>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</p>
       </ModalConfirmation>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Matriculation</th>
-            <th>Nom</th>
-            <th>Prenom</th>
-            <th>Email</th>
-            <th>Fonction</th>
-            <th>Adresse</th>
-            <th>Genre</th>
-            <th>Status matrimoniale</th>
-            {user?.role === 'administrateur' && <th>Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {utilisateurs.map(utilisateur => (
-            <tr key={utilisateur.id}>
-              <td>{utilisateur.matriculation}</td>
-              <td>{utilisateur.nom}</td>
-              <td>{utilisateur.prenom}</td>
-              <td>{utilisateur.email}</td>
-              <td>{utilisateur.fonction}</td>
-              <td>{utilisateur.adresse}</td>
-              <td>{utilisateur.genre}</td>
-              <td>{utilisateur.statusMatrimoniale}</td>
-              {user?.role === 'administrateur' && (
-                <td>
-                  <button onClick={() => openModal(utilisateur)} className={styles.actionButton}>
-                    Modifier
-                  </button>
-                  <button onClick={() => openDeleteConfirmation(utilisateur)} className={styles.actionButton}>
-                    Supprimer
-                  </button>
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }

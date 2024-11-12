@@ -1,86 +1,138 @@
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0px 20px 20px 20px;
+.dashboardWrapper {
+  min-height: 100vh;
+  background: #f8fafc;
 }
 
-.header {
-  margin-bottom: 1rem;
+.topHeader {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: calc(100% - 250px); /* Adjust based on your sidebar width */
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 100;
 }
 
-.title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-  margin-top: 0px;
-}
-
-.subtitle {
-  font-size: 1.25rem;
-  color: #4a5568;
-  margin-top: 0px;
-}
-
-.grid {
+.headerContent {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
-}
-
-.cardTitle {
+.profileSection {
   display: flex;
   align-items: center;
+  gap: 15px;
+  background: #f8fafc;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.profileIcon {
+  font-size: 2.5rem;
+  color: #3182ce;
+}
+
+.profileDetails h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.profileDetails p {
+  margin: 0;
+  color: #718096;
+  font-size: 1rem;
+}
+
+.timerSection {
+  background: #f8fafc;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.timerInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #718096;
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeBlock {
+  text-align: center;
+  min-width: 60px;
+}
+
+.timeBlock span {
   font-size: 1.5rem;
-  font-weight: 600;
-  padding: 1rem 0;
-  margin-top: 0rem;
-  margin:0px 0px 0px 0px;
+  font-weight: bold;
+  color: #2d3748;
 }
 
-.icon {
-  margin-right: 0.75rem;
-  font-size: 1.5rem;
+.timeBlock small {
+  display: block;
+  color: #718096;
+  font-size: 0.75rem;
 }
 
-.profileInfo {
-  color: #4a5568;
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
+.separator {
+  color: #718096;
+  font-weight: bold;
 }
 
-@media (max-width: 768px) {
-  .grid {
+.dashboardContent {
+  padding: 100px 30px 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.welcome {
+  color: #718096;
+  margin-bottom: 30px;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.sessionsSection,
+.chartSection {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 1024px) {
+  .topHeader {
+    width: 100%;
+  }
+
+  .headerContent {
     flex-direction: column;
+    gap: 15px;
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
   }
 }
 
-#Piechart {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  flex-grow: 1;
-}
-
-#Session {
-  display: flex;
-  align-items: center;
-  margin-top: 0px;
-  margin-bottom: 1rem;
-  flex-grow: 1.6;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.card.Session {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 16px;
+  }
 }

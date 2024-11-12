@@ -1,128 +1,118 @@
-/* .logoutContainer {
-    position: absolute;
-    bottom: 2rem;
-        width: 100%;
-}
-.logoutButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem;
-    background-color: #e74c3c;
-    color: #ecf0f1;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.logoutButton:hover {
-    background-color: #c0392b;
+/* .logoutButton {
+  --logout-text-display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #e74c3c;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  position: relative;
+  z-index: 1500;
 }
 
 .icon {
-    font-size: 1.2rem;
+  font-size: 1.2rem;
+  min-width: 20px;
 }
 
-.expanded {
-    justify-content: flex-start;
+.logoutText {
+  font-size: 1rem;
+  /* white-space: nowrap; */
+  /* display: var(--logout-text-display); */
+  /*transition: opacity 0.3s ease;
 }
 
-.expanded .icon {
-    margin-right: 0.5rem;
+/* .collapsed .logoutText {
+  display: none;
+} */
+
+/* .expanded .logoutText {
+  display: var(--logout-text-display);
+} */
+
+/*
+.logoutButton:hover {
+  background-color: rgba(231, 76, 60, 0.1);
 }
 
-.collapsed {
-    width: 60px;
-    padding: 0.75rem 0;
-}
-
-.collapsed span {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .logoutButton {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .logoutButton span {
-      display: inline;
-    }
-
-    .logoutButton .icon {
-      margin-right: 0.5rem;
-    }
-}.confirmationDialog {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
-}
-
-.confirmationButtons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.confirmButton, .cancelButton {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.confirmButton {
-    background-color: #4CAF50;
+@media screen and (max-width: 768px) {
+  .logoutButton {
+    position: fixed;
+    bottom: 80px;
+    left: 20px;
+    width: auto;
+    background-color: #e74c3c;
     color: white;
+    border-radius: 30px;
+    padding: 10px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .logoutButton:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+  }
+
+  .logoutText {
+    display: var(--logout-text-display) !important;
+  }
+
+  .collapsed .logoutText,
+  .expanded .logoutText {
+    display: var(--logout-text-display) !important;
+  }
 }
 
-.cancelButton {
-    background-color: #f44336;
-    color: white;
+.modalBody{
+  color: black;
 } */
 
 .logoutButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    width: 100%;
-    background-color: #c0392b;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  background: transparent;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 8px;
+  color: #e74c3c;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  background: rgba(231, 76, 60, 0.1);
+  transform: translateY(-2px);
+}
+
+.icon {
+  font-size: 1.2rem;
+  margin-right: 12px;
+}
+
+.logoutText {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.modalBody {
+  text-align: center;
+  padding: 1rem;
+  color: #2c3e50;
+}
+
+@media (max-width: 768px) {
+  .logoutButton {
+    background: #e74c3c;
     color: white;
     border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    position: relative;
-    bottom: 0;
   }
-  
+
   .logoutButton:hover {
-    background-color: #e74c3c;
+    background: #c0392b;
   }
-  
-  .logoutButton .icon {
-    margin-right: 8px;
-  }
-  
-  .collapsed .icon {
-    margin-right: 0;
-  }
-  
-  .expanded {
-    justify-content: flex-start;
-  }
-  
-  .collapsed {
-    justify-content: center;
-  }
-  
+}

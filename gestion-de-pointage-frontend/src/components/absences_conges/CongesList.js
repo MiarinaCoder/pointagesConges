@@ -154,12 +154,22 @@
 //   }
 
 import React, { useState, useEffect, useCallback } from "react";
+import {
+  FaPlus,
+  FaSpinner,
+  FaEdit,
+  FaTrash,
+  FaCheck,
+  FaTimes,
+} from "react-icons/fa";
+
 import CongeForm from "../forms/CongeForm";
 import Modal from "../common/Modal";
 import ModalConfirmation from "../common/ModalConfirmation";
 import styles from "../../styles/components/congeList.module.css";
 import api from "@/services/api";
 import ActionDropdown from "../common/ActionDropdown";
+import { toast } from "react-toastify";
 
 export default function CongeList({ userId, isAdmin }) {
   const [conges, setConges] = useState([]);
@@ -167,6 +177,27 @@ export default function CongeList({ userId, isAdmin }) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedConge, setSelectedConge] = useState(null);
   const [congeToDelete, setCongeToDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = conges.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= Math.ceil(conges.length / itemsPerPage)) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat("fr-FR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(date));
+  };
 
   const getStatusStyle = (status) => {
     switch (status.toLowerCase()) {
@@ -186,15 +217,15 @@ export default function CongeList({ userId, isAdmin }) {
       const endpoint = userId
         ? `/absence/conge/user/${userId}`
         : "/absence/conge";
-
-      const response = await api.get(endpoint, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await api.get(endpoint);
       setConges(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Erreur lors de la récupération des congés:", error);
+      toast.error("Erreur lors du chargement des congés");
+      setLoading(false);
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     fetchConges();
@@ -202,46 +233,48 @@ export default function CongeList({ userId, isAdmin }) {
 
   const handleCreate = async (newConge) => {
     try {
-      await api.post("/absence", newConge, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await api.post("/absence", newConge);
       fetchConges();
       setIsModalOpen(false);
+      toast.success("Congé créé avec succès");
     } catch (error) {
-      console.error("Erreur lors de la création du congé:", error);
+      toast.error("Erreur lors de la création du congé");
     }
   };
 
   const handleUpdate = async (updatedConge) => {
     try {
-      await api.put(`/absence/${selectedConge.idAbsence}`, updatedConge, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await api.put(`/absence/${selectedConge.idAbsence}`, updatedConge);
       fetchConges();
       setIsModalOpen(false);
       setSelectedConge(null);
+      toast.success("Congé mis à jour avec succès");
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du congé:", error);
+      toast.error("Erreur lors de la mise à jour du congé");
     }
-  };
-
-  const openDeleteConfirmation = (conge) => {
-    setCongeToDelete(conge);
-    setIsConfirmModalOpen(true);
   };
 
   const handleDelete = async () => {
     if (congeToDelete) {
       try {
-        await api.delete(`/absence/${congeToDelete.idAbsence}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        await api.delete(`/absence/${congeToDelete.idAbsence}`);
         fetchConges();
         setIsConfirmModalOpen(false);
         setCongeToDelete(null);
+        toast.success("Congé supprimé avec succès");
       } catch (error) {
-        console.error("Erreur lors de la suppression du congé:", error);
+        toast.error("Erreur lors de la suppression du congé");
       }
+    }
+  };
+
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      await api.patch(`/absence/conge/status/${id}`, { statut: newStatus });
+      fetchConges();
+      toast.success("Statut mis à jour avec succès");
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour du statut");
     }
   };
 
@@ -271,30 +304,17 @@ export default function CongeList({ userId, isAdmin }) {
     setSelectedConge(null);
   };
 
-  const handleStatusUpdate = async (id, newStatus) => {
-    try {
-      await api.patch(
-        `/absence/conge/status/${id}`,
-        { statut: newStatus },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-      fetchConges();
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour du statut:", error);
-    }
-  };
-
-
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>
-        {userId ? "Mes congés" : "Liste des congés"}
+        {userId ? "Mes demandes de congés" : "Gestion des congés"}
       </h2>
+
       <button className={styles.addButton} onClick={() => openModal()}>
-        {userId ? "Demander un congé" : "Ajouter un congé"}
+        <FaPlus />
+        {userId ? "Nouvelle demande" : "Ajouter un congé"}
       </button>
+
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <CongeForm
           conge={selectedConge}
@@ -302,6 +322,7 @@ export default function CongeList({ userId, isAdmin }) {
           onClose={closeModal}
         />
       </Modal>
+
       <ModalConfirmation
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
@@ -311,80 +332,162 @@ export default function CongeList({ userId, isAdmin }) {
       >
         <p>Êtes-vous sûr de vouloir supprimer ce congé ?</p>
       </ModalConfirmation>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Utilisateur</th>
-            <th>Date de début</th>
-            <th>Date de fin</th>
-            <th>Motif</th>
-            <th>Statut</th>
-            <th>Type de congé</th>
-            <th>Nombre de jours de congé</th>
-            {isAdmin && <th>Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {conges.map((conge) => (
-            <tr key={conge.idAbsence}>
-              <td>
-                {conge.nom_utilisateur} {conge.prenom_utilisateur}
-              </td>
-              <td>{new Date(conge.dateDebutAbsence).toLocaleDateString()}</td>
-              <td>
-                {conge.dateFinAbsence
-                  ? new Date(conge.dateFinAbsence).toLocaleDateString()
-                  : "N/A"}
-              </td>
-              <td>{conge.motif}</td>
-              <td>
-                <span className={getStatusStyle(conge.statut)}>
-                  {conge.statut}
-                </span>
-              </td>
-              <td>{conge.type_de_conge}</td>
-              <td>{conge.nombre_jour_conge}</td>
-              <td>
-                <ActionDropdown>
-                  <button
-                    onClick={() => openModal(conge)}
-                    className={styles.modify}
-                  >
-                    Modifier
-                  </button>
-                  <button
-                    onClick={() => openDeleteConfirmation(conge)}
-                    className={styles.delete}
-                  >
-                    Supprimer
-                  </button>
 
-                  {isAdmin && conge.statut === "en_attente" && (
-                    <>
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate(conge.idAbsence, "approuvee")
-                        }
-                        className={styles.approve}
-                      >
-                        Approuver
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate(conge.idAbsence, "rejete")
-                        }
-                        className={styles.reject}
-                      >
-                        Rejeter
-                      </button>
-                    </>
+      {loading ? (
+        <div className={styles.loading}>
+          <FaSpinner className={styles.spinner} />
+          Chargement...
+        </div>
+      ) : conges.length === 0 ? (
+        <div className={styles.noData}>
+          Aucune demande de congé n'a été trouvée.
+        </div>
+      ) : (
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th>Motif</th>
+                <th>Statut</th>
+                <th>Type</th>
+                <th>Jours</th>
+                {isAdmin && <th>Actions</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {currentItems.map((conge) => (
+                <tr key={conge.idAbsence}>
+                  <td>
+                    {conge.nom_utilisateur} {conge.prenom_utilisateur}
+                  </td>
+                  <td className={styles.dateCell}>
+                    {formatDate(conge.dateDebutAbsence)}
+                  </td>
+                  <td className={styles.dateCell}>
+                    {conge.dateFinAbsence
+                      ? formatDate(conge.dateFinAbsence)
+                      : "N/A"}
+                  </td>
+                  <td>{conge.motif}</td>
+                  <td>
+                    <span className={getStatusStyle(conge.statut)}>
+                      {conge.statut}
+                    </span>
+                  </td>
+                  <td>{conge.type_de_conge}</td>
+                  <td>{conge.nombre_jour_conge}</td>
+                  {isAdmin && (
+                    <td>
+                      <ActionDropdown>
+                        <div className={styles.dropdownCard}>
+                          <div className={styles.dropdownHeader}>
+                            <h4>Actions disponibles</h4>
+                          </div>
+
+                          <div className={styles.dropdownContent}>
+                            <button
+                              onClick={() => openModal(conge)}
+                              className={`${styles.dropdownItem} ${styles.modify}`}
+                              aria-label="Modifier la demande"
+                            >
+                              <FaEdit className={styles.actionIcon} />
+                              <span>Modifier</span>
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                setCongeToDelete(conge);
+                                setIsConfirmModalOpen(true);
+                              }}
+                              className={`${styles.dropdownItem} ${styles.delete}`}
+                              aria-label="Supprimer la demande"
+                            >
+                              <FaTrash className={styles.actionIcon} />
+                              <span>Supprimer</span>
+                            </button>
+
+                            {conge.statut === "en_attente" && (
+                              <>
+                                <div
+                                  className={styles.dropdownDivider}
+                                  role="separator"
+                                />
+
+                                <button
+                                  onClick={() =>
+                                    handleStatusUpdate(
+                                      conge.idAbsence,
+                                      "approuvee"
+                                    )
+                                  }
+                                  className={`${styles.dropdownItem} ${styles.approve}`}
+                                  aria-label="Approuver la demande"
+                                >
+                                  <FaCheck className={styles.actionIcon} />
+                                  <span>Approuver</span>
+                                </button>
+
+                                <button
+                                  onClick={() =>
+                                    handleStatusUpdate(
+                                      conge.idAbsence,
+                                      "rejete"
+                                    )
+                                  }
+                                  className={`${styles.dropdownItem} ${styles.reject}`}
+                                  aria-label="Rejeter la demande"
+                                >
+                                  <FaTimes className={styles.actionIcon} />
+                                  <span>Rejeter</span>
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </ActionDropdown>
+                    </td>
                   )}
-                </ActionDropdown>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className={styles.pagination}>
+        <select
+          className={styles.rowsPerPage}
+          onChange={(e) => setItemsPerPage(Number(e.target.value))}
+        >
+          <option value={5}>5 par page</option>
+          <option value={10}>10 par page</option>
+          <option value={25}>25 par page</option>
+          <option value={50}>50 par page</option>
+        </select>
+
+        <button
+          className={styles.paginationButton}
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Précédent
+        </button>
+
+        <span className={styles.paginationInfo}>
+          Page {currentPage} sur {Math.ceil(conges.length / itemsPerPage)}
+        </span>
+
+        <button
+          className={styles.paginationButton}
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === Math.ceil(conges.length / itemsPerPage)}
+        >
+          Suivant
+        </button>
+      </div>
     </div>
   );
 }

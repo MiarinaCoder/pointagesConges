@@ -8,5 +8,6 @@ router.use(authMiddleware);
 
 router.put('/:id_session/terminer',  sessionController.terminerSession);
 router.get('/:id_utilisateur',  sessionController.getSessionsByUser);
+router.get('/:sessionId/heureDebut',  sessionController.getHeureDebut);
 
 module.exports = router;

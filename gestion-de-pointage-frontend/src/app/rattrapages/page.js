@@ -2,88 +2,244 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import Layout from "@/components/layout/Layout";
-import { FaPlus, FaCheck, FaTimes, FaPaperclip } from "react-icons/fa";
+import { FaPlus, FaCheck, FaTimes, FaPaperclip, FaFilter, FaSearch, FaEye } from "react-icons/fa";
 import styles from "@/app/rattrapages/Rattrapages.module.css";
 import api from "@/services/api";
 import AuthContext from "@/context/authContext";
+import { toast } from 'react-toastify';
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 5;
 
 export default function Rattrapages() {
+  const [loading, setLoading] = useState(false);
   const [rattrapages, setRattrapages] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [selectedRattrapage, setSelectedRattrapage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const { user } = useContext(AuthContext);
   const [newRattrapage, setNewRattrapage] = useState({
     date: "",
     hours: "",
     reason: "",
     attachment: null,
   });
-  const [isManager, setIsManager] = useState(false);
-  const { user } = useContext(AuthContext);
 
   const handleNextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
+    if ((currentPage + 1) * ITEMS_PER_PAGE < filteredRattrapages.length) {
+      setCurrentPage(prev => prev + 1);
+    }
   };
 
   const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+    if (currentPage > 0) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('date', newRattrapage.date);
+      formData.append('hours', newRattrapage.hours);
+      formData.append('reason', newRattrapage.reason);
+      if (newRattrapage.attachment) {
+        formData.append('attachment', newRattrapage.attachment);
+      }
+
+      await api.post("/rattrapages", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      toast.success('Demande de rattrapage envoyée avec succès');
+      setShowFormModal(false);
+      setNewRattrapage({
+        date: "",
+        hours: "",
+        reason: "",
+        attachment: null,
+      });
+      fetchRattrapages();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Une erreur est survenue');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchRattrapages = async () => {
+    setLoading(true);
     try {
       const endpoint = user?.role === 'administrateur' 
-      ? "/rattrapages"
-      : `/rattrapages/${user?.id}`;    
-      const response = await api.get(endpoint,{
+        ? "/rattrapages"
+        : `/rattrapages/${user?.id}`;
+      const response = await api.get(endpoint, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setRattrapages(response.data);
     } catch (error) {
-      console.error("Error fetching rattrapages:", error);
+      toast.error('Erreur lors du chargement des rattrapages');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    // const fetchUserRole = async () => {
-    //   try {
-    //     const response = await api.get('/auth/user-role');
-    //     setIsManager(response.data.role === 'manager');
-    //   } catch (error) {
-    //     console.error('Error fetching user role:', error);
-    //   }
-    // };
-
-    // fetchUserRole();
-    fetchRattrapages();
+    if (user) {
+      fetchRattrapages();
+    }
   }, [user]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const rattrapageData = {
-        date: newRattrapage.date,
-        hours: newRattrapage.hours,
-        reason: newRattrapage.reason,
-      };
+  const filteredRattrapages = rattrapages.filter(rattrapage => {
+    const matchesSearch = rattrapage.nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         rattrapage.prenom?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === "all" || rattrapage.statut === filterStatus;
+    return matchesSearch && matchesFilter;
+  });
 
+  const FormModal = () => (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
+          <h2 className={styles.formTitle}>
+            <FaPlus /> Nouvelle demande de rattrapage
+          </h2>
+          <button 
+            className={styles.closeModalButton}
+            onClick={() => setShowFormModal(false)}
+          >
+            ×
+          </button>
+        </div>
 
-      const response = await api.post("/rattrapages", rattrapageData);
+        <form onSubmit={handleSubmit} className={styles.rattrapageForm}>
+          <div className={styles.formGroup}>
+            <label htmlFor="date">Date du rattrapage</label>
+            <div className={styles.inputWrapper}>
+              <input
+                id="date"
+                type="date"
+                value={newRattrapage.date}
+                onChange={(e) => setNewRattrapage({ ...newRattrapage, date: e.target.value })}
+                min={new Date().toISOString().split('T')[0]}
+                required
+              />
+            </div>
+          </div>
 
+          <div className={styles.formGroup}>
+            <label htmlFor="hours">Nombre d'heures</label>
+            <div className={styles.inputWrapper}>
+              <input
+                id="hours"
+                type="number"
+                min="1"
+                max="8"
+                placeholder="Ex: 2"
+                value={newRattrapage.hours}
+                onChange={(e) => setNewRattrapage({ ...newRattrapage, hours: e.target.value })}
+                required
+              />
+              <small className={styles.helpText}>Entre 1 et 8 heures</small>
+            </div>
+          </div>
 
-      // // Rafraîchir la liste des rattrapages
-      // const rattrapagesResponse = await api.get("/rattrapages");
-      // setRattrapages(rattrapagesResponse.data);
-      fetchRattrapages();
+          <div className={styles.formGroup}>
+            <label htmlFor="reason">Motif du rattrapage</label>
+            <div className={styles.inputWrapper}>
+              <textarea
+                id="reason"
+                placeholder="Décrivez la raison de votre demande..."
+                value={newRattrapage.reason}
+                onChange={(e) => setNewRattrapage({ ...newRattrapage, reason: e.target.value })}
+                required
+                rows="3"
+                maxLength="200"
+              />
+              <small className={styles.helpText}>
+                {200 - newRattrapage.reason.length} caractères restants
+              </small>
+            </div>
+          </div>
 
-      // Réinitialiser le formulaire
-      setNewRattrapage({ date: "", hours: "", reason: "", attachment: null });
-    } catch (error) {
-      console.error(
-        "Erreur lors de la soumission du rattrapage:",
-        error.response?.data || error.message
-      );
-    }
-  };
+          <div className={styles.formGroup}>
+            <label htmlFor="attachment">Pièce justificative</label>
+            <div className={styles.fileInputWrapper}>
+              <input
+                type="file"
+                id="attachment"
+                onChange={handleFileChange}
+                accept=".pdf,.jpg,.jpeg,.png"
+                className={styles.hiddenFileInput}
+              />
+              <label htmlFor="attachment" className={styles.customFileInput}>
+                <FaPaperclip />
+                {newRattrapage.attachment
+                  ? newRattrapage.attachment.name
+                  : "Sélectionner un fichier"}
+              </label>
+              <small className={styles.helpText}>
+                Formats acceptés: PDF, JPG, PNG (max 5MB)
+              </small>
+            </div>
+          </div>
+
+          <div className={styles.formActions}>
+            <button type="button" className={styles.resetButton} onClick={() => setShowFormModal(false)}>
+              Annuler
+            </button>
+            <button type="submit" className={styles.submitButton}>
+              <FaPlus /> Soumettre la demande
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
+  const DetailModal = ({ rattrapage, onClose }) => (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <h2>Détails du rattrapage</h2>
+        <div className={styles.detailsGrid}>
+          <div className={styles.detailItem}>
+            <label>Utilisateur</label>
+            <p>{rattrapage.nom} {rattrapage.prenom}</p>
+          </div>
+          <div className={styles.detailItem}>
+            <label>Date</label>
+            <p>{new Date(rattrapage.date_penalite).toLocaleDateString()}</p>
+          </div>
+          <div className={styles.detailItem}>
+            <label>Heures à rattraper</label>
+            <p>{rattrapage.heures_a_rattraper}</p>
+          </div>
+          <div className={styles.detailItem}>
+            <label>Type de demande</label>
+            <p>{rattrapage.type_demande}</p>
+          </div>
+          <div className={styles.detailItem}>
+            <label>Statut</label>
+            <p className={styles[rattrapage.statut]}>{rattrapage.statut}</p>
+          </div>
+          {rattrapage.commentaire && (
+            <div className={styles.detailItem}>
+              <label>Commentaire</label>
+              <p>{rattrapage.commentaire}</p>
+            </div>
+          )}
+        </div>
+        <button className={styles.closeButton} onClick={onClose}>Fermer</button>
+      </div>
+    </div>
+  );
 
   const handleFileChange = (e) => {
     setNewRattrapage({ ...newRattrapage, attachment: e.target.files[0] });
@@ -92,9 +248,7 @@ export default function Rattrapages() {
   const handleApprove = async (id) => {
     try {
       await api.put(`/rattrapages/${id}`, { status: "approved" });
-      // Refresh the list of rattrapages
-      const response = await api.get("/rattrapages");
-      setRattrapages(response.data);
+      fetchRattrapages();
     } catch (error) {
       console.error("Error approving rattrapage:", error);
     }
@@ -103,109 +257,126 @@ export default function Rattrapages() {
   const handleReject = async (id) => {
     try {
       await api.put(`/rattrapages/${id}`, { status: "rejected" });
-      // Refresh the list of rattrapages
-      const response = await api.get("/rattrapages");
-      setRattrapages(response.data);
+      fetchRattrapages();
     } catch (error) {
       console.error("Error rejecting rattrapage:", error);
     }
   };
+
   return (
     <Layout>
       <div className={styles.rattrapagesContainer}>
-        <h1 className={styles.title}>Gestion des Rattrapages</h1>
-
-        {!isManager && (
-          <form onSubmit={handleSubmit} className={styles.rattrapageForm}>
-            <input
-              type="date"
-              value={newRattrapage.date}
-              onChange={(e) =>
-                setNewRattrapage({ ...newRattrapage, date: e.target.value })
-              }
-              required
-            />
-            <input
-              type="number"
-              placeholder="Heures"
-              value={newRattrapage.hours}
-              onChange={(e) =>
-                setNewRattrapage({ ...newRattrapage, hours: e.target.value })
-              }
-              required
-            />
-            <input
-              type="text"
-              placeholder="Raison"
-              value={newRattrapage.reason}
-              onChange={(e) =>
-                setNewRattrapage({ ...newRattrapage, reason: e.target.value })
-              }
-              required
-            />
-            <div className={styles.fileInput}>
+        <div className={styles.pageHeader}>
+          <h1 className={styles.title}>Gestion des Rattrapages</h1>
+          <div className={styles.actionBar}>
+            <div className={styles.searchBar}>
+              <FaSearch className={styles.searchIcon} />
               <input
-                type="file"
-                id="attachment"
-                onChange={handleFileChange}
-                className={styles.hiddenFileInput}
+                type="text"
+                placeholder="Rechercher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <label htmlFor="attachment" className={styles.fileInputLabel}>
-                <FaPaperclip />{" "}
-                {newRattrapage.attachment
-                  ? newRattrapage.attachment.name
-                  : "Joindre un fichier"}
-              </label>
             </div>
-            <button type="submit" className={styles.submitButton}>
-              <FaPlus /> Ajouter un rattrapage
-            </button>
-          </form>
-        )}
-<div className={styles.rattrapagesContainer}>
-    {rattrapages.length > 0 ? (
-      <div className={styles.rattrapagesList}>
-        {rattrapages
-          .slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE)
-          .map((rattrapage, index) => {
-            // Ensure we have a unique key by using array index as fallback
-            const uniqueKey = rattrapage.id_rattrapage || `rattrapage-${index}`
-            return (
-              <div key={uniqueKey} className={styles.rattrapageItem}>
-                <div className={styles.rattrapageInfo}>
-                  <p><strong>Utilisateur : {rattrapage.nom} {rattrapage.prenom}</strong></p>
-                  <p>Date: {new Date(rattrapage.date_penalite).toLocaleDateString()}</p>
-                  <p>Heures à rattraper: {rattrapage.heures_a_rattraper}</p>
-                  <p>Type de demande: {rattrapage.type_demande}</p>
-                  <p>Statut: <span className={styles[rattrapage.statut]}>{rattrapage.statut}</span></p>
-                </div>
-                {isManager && rattrapage.statut === 'pending' && (
-                  <div className={styles.actionButtons}>
-                    <button onClick={() => handleApprove(rattrapage.id_rattrapage)} className={styles.approveButton}>
-                      <FaCheck /> Approuver
-                    </button>
-                    <button onClick={() => handleReject(rattrapage.id_rattrapage)} className={styles.rejectButton}>
-                      <FaTimes /> Rejeter
-                    </button>
-                  </div>
-                )}
+            <select 
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className={styles.filterSelect}
+            >
+              <option value="all">Tous les statuts</option>
+              <option value="pending">En attente</option>
+              <option value="approved">Approuvé</option>
+              <option value="rejected">Rejeté</option>
+            </select>
+          </div>
+        </div>
+        {loading && <div className={styles.loader}>Chargement...</div>}
+        {user?.role !== 'administrateur' && (
+          <div className={styles.newRequestSection}>
+            <button 
+              className={styles.newRequestButton}
+              onClick={() => setShowFormModal(true)}
+            >
+              <div className={styles.buttonContent}>
+                <FaPlus className={styles.buttonIcon} />
+                <span className={styles.buttonText}>Nouvelle demande de rattrapage</span>
               </div>
-            )
-        })}
-      </div>
+              <small className={styles.buttonHint}>Cliquez pour créer une nouvelle demande</small>
+            </button>
+          </div>
+        )}
+        <div className={styles.rattrapagesList}>
+          {filteredRattrapages
+            .slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE)
+            .map((rattrapage) => (
+              <div key={rattrapage.id_rattrapage} className={styles.rattrapageCard}>
+                <div className={styles.cardHeader}>
+                  <h3>{rattrapage.nom} {rattrapage.prenom}</h3>
+                  <span className={`${styles.statusBadge} ${styles[rattrapage.statut]}`}>
+                    {rattrapage.statut}
+                  </span>
+                </div>
+                <div className={styles.cardBody}>
+                  <p><strong>Date:</strong> {new Date(rattrapage.date_penalite).toLocaleDateString()}</p>
+                  <p><strong>Heures:</strong> {rattrapage.heures_a_rattraper}h</p>
+                </div>
+                <div className={styles.cardFooter}>
+                  <button 
+                    className={styles.viewDetailsButton}
+                    onClick={() => {
+                      setSelectedRattrapage(rattrapage);
+                      setShowModal(true);
+                    }}
+                  >
+                    <FaEye /> Voir plus
+                  </button>
+                  {user?.role === 'administrateur' && rattrapage.statut === 'pending' && (
+                    <div className={styles.adminActions}>
+                      <button onClick={() => handleApprove(rattrapage.id_rattrapage)} className={styles.approveButton}>
+                        <FaCheck />
+                      </button>
+                      <button onClick={() => handleReject(rattrapage.id_rattrapage)} className={styles.rejectButton}>
+                        <FaTimes />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+        </div>
 
-    ) : (      <p>Aucun rattrapage à afficher.</p>
-    )}
-    <div className={styles.pageNavigation}>
-      <button onClick={handlePrevPage} disabled={currentPage === 0}>
-        Page précédente
-      </button>
-      <button onClick={handleNextPage} disabled={(currentPage + 1) * ITEMS_PER_PAGE >= rattrapages.length}>
-        Page suivante
-      </button>
-    </div>
-  </div>
-  </div>
-  </Layout>
+        {showModal && selectedRattrapage && (
+          <DetailModal 
+            rattrapage={selectedRattrapage} 
+            onClose={() => {
+              setShowModal(false);
+              setSelectedRattrapage(null);
+            }}
+          />
+        )}
+
+        {showFormModal && <FormModal />}
+
+        <div className={styles.pagination}>
+          <button 
+            className={styles.pageButton} 
+            onClick={handlePrevPage} 
+            disabled={currentPage === 0}
+          >
+            Précédent
+          </button>
+          <span className={styles.pageInfo}>
+            Page {currentPage + 1} sur {Math.ceil(filteredRattrapages.length / ITEMS_PER_PAGE)}
+          </span>
+          <button 
+            className={styles.pageButton} 
+            onClick={handleNextPage} 
+            disabled={(currentPage + 1) * ITEMS_PER_PAGE >= filteredRattrapages.length}
+          >
+            Suivant
+          </button>
+        </div>
+      </div>
+    </Layout>
   );
 }

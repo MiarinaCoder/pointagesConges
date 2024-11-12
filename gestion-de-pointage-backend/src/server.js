@@ -10,6 +10,7 @@ const rattrapageRoutes=require('./routes/rattrapagesRoutes');
 const absenceRoutes=require('./routes/absenceRoutes');
 const penaliteRoutes=require('./routes/penaliteRoutes');
 const parametresRoutes = require('./routes/parametresTravailRoutes');
+const justificationRoutes = require('./routes/justificationRoutes');
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use('/api/rattrapages', rattrapageRoutes);
 app.use('/api/absence', absenceRoutes);
 app.use('/api/penalites', penaliteRoutes);
 app.use('/api/parametres', parametresRoutes);
+app.use('/api/justifications', justificationRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
