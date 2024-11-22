@@ -1,22 +1,55 @@
 .retardAlert {
   background-color: #fff3cd;
   border: 1px solid #ffeeba;
-  border-radius: 4px;
-  padding: 12px 20px;
-  margin: 10px 0;
+  border-radius: 8px;
+  padding: 15px 25px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.5s ease-out;
+  width: 100%;
+  max-width: 600px;
+  margin: 15px auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .retardMessage {
   color: #856404;
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.retardMessage strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.retardMessage p {
+  margin: 5px 0;
 }
 
 .retardAlert:hover {
   background-color: #ffecb5;
-  transition: background-color 0.2s ease;
+  transform: translateY(-2px);
+}
+
+.customToast {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+  border: 1px solid #ffeeba;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

@@ -1,0 +1,36 @@
+.documentationContainer {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.documentationContainer h1 {
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.documentationContainer h2 {
+  color: #444;
+  margin: 1.5rem 0 1rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.documentationContainer ul {
+  list-style-type: none;
+  padding-left: 1rem;
+}
+
+.documentationContainer li {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.documentationContainer li:before {
+  content: "•";
+  color: #007bff;
+  position: absolute;
+  left: 0;
+}

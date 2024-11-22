@@ -40,7 +40,7 @@ export default function EmployeeForm({ utilisateur, onSubmit, onClose }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmitForm)} className={styles.formContainer}>
-<div className={styles.inputGroup}>
+    <div className={styles.inputGroup}>
           <label htmlFor="matriculation" className={styles.label}>
             Matriculation
           </label>

@@ -271,6 +271,8 @@ export default function CongeForm({ conge, onSubmit, onClose }) {
     }
   }, [typeDeConge, setValue, congeTypes]);
 
+  const isAdminSuggestion = conge?.isSuggestion;
+
   const handleFormSubmit = (data) => {
     const formattedData = {
       id_utilisateur: user.id,
@@ -278,7 +280,8 @@ export default function CongeForm({ conge, onSubmit, onClose }) {
       nombre_jour_conge: Number(data.nombre_jour_conge),
       dateDebutAbsence: new Date(data.dateDebutAbsence).toISOString(),
       dateFinAbsence: new Date(data.dateFinAbsence).toISOString(),
-      motif: data.motif || ''
+      motif: data.motif || '',
+      statut: isAdminSuggestion ? 'suggestion_date' : undefined
     };
     
     onSubmit(formattedData);
@@ -347,7 +350,8 @@ export default function CongeForm({ conge, onSubmit, onClose }) {
 
       <div className={styles.buttonContainer}>
         <button type="submit" className={styles.button}>
-          {conge ? "Modifier" : "Ajouter"}
+
+          {isAdminSuggestion ? "Suggérer ces dates" : (conge ? "Modifier" : "Ajouter")}
         </button>
       </div>
     </form>

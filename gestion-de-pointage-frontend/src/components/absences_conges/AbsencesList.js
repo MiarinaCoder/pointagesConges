@@ -36,6 +36,7 @@ export default function AbsenceList({ userId }) {
             <th>Utilisateur</th>
             <th>Date de début</th>
             <th>Date de fin</th>
+            <th>Durée</th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +45,7 @@ export default function AbsenceList({ userId }) {
               <td>{absence.nom_utilisateur} {absence.prenom_utilisateur}</td>
               <td>{new Date(absence.dateDebutAbsence).toLocaleDateString()}</td>
               <td>{absence.dateFinAbsence ? new Date(absence.dateFinAbsence).toLocaleDateString() : 'N/A'}</td>
+              <td>{absence.nombre_jour_conge} jours</td>
             </tr>
           ))}
         </tbody>

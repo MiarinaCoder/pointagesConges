@@ -30,9 +30,9 @@ export default function JustificationsPage() {
     fetchJustifications();
   };
 
-  const handleDelete = (deletedId) => {
-    setJustifications(prev => prev.filter(j => j.idJustification !== deletedId));
-  };
+  // const handleDelete = (deletedId) => {
+  //   setJustifications(prev => prev.filter(j => j.idJustification !== deletedId));
+  // };
 
   return (
     <Layout>
@@ -41,7 +41,7 @@ export default function JustificationsPage() {
         <JustificationForm onSuccess={handleSuccess} />
         <JustificationList 
           justifications={justifications}
-          onDelete={handleDelete}
+          // onDelete={handleDelete}
         />
       </div>
     </Layout>

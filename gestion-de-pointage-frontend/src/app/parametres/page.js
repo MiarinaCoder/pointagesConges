@@ -183,7 +183,7 @@ const Parametres = () => {
     { icon: FaClock, title: "Heure de Début", value: params.tempsDebutTravail, key: "tempsDebutTravail" },
     { icon: FaCalendarDay, title: "Durée Journée", value: `${params.dureeJourneeTravail}h`, key: "dureeJourneeTravail" },
     { icon: FaHourglassHalf, title: "Seuil Heures Supp.", value: `${params.seuilHeuresSupp}h`, key: "seuilHeuresSupp" },
-    { icon: FaMoneyBill, title: "Montant Pénalité", value: `${params.montantPenalite} DH`, key: "montantPenalite" },
+    { icon: FaMoneyBill, title: "Montant Pénalité", value: `${params.montantPenalite} Ariary`, key: "montantPenalite" },
     { icon: FaCoffee, title: "Heure de Pause", value: params.heurePause, key: "heurePause" }
   ];
 

@@ -20,5 +20,9 @@ router.get('/conge/user/:userId', absencesController.getCongesByUserId);
 router.patch('/conge/status/:id', absencesController.updateStatus);
 router.post('/period', absencesController.getAbsencesByPeriod);
 router.post('/period/:userId', absencesController.getAbsencesByPeriodWhereUser);
+router.get('/statistique/global/today', absencesController.getGlobalTodayStats);
+router.get('/statistique/user/:userId', absencesController.getGlobalTodayStatsEmploye);
+router.put("/:idAbsence/suggest", absencesController.suggestDates);
+router.post("/:idAbsence/suggest/response", absencesController.respondToSuggestion);
 
 module.exports = router;

@@ -4,7 +4,7 @@ export default function Layout({ children }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>{children}</AuthProvider> {/* Utilisation correcte du Provider */}
+        <AuthProvider>{children}</AuthProvider> 
       </body>
     </html>
   );

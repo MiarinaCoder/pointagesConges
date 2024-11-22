@@ -104,7 +104,6 @@ exports.updateStatus= async (req, res) => {
   
 exports.getAbsencesByPeriod = async (req, res) => {
   try {
-    console.log(req.body);
     const { period, offset } = req.body;
     const [absences] = await Absence.getAbsencesByPeriod(period, parseInt(offset));
     res.status(200).json(absences);
@@ -117,11 +116,148 @@ exports.getAbsencesByPeriodWhereUser = async (req, res) => {
   try {
     const {userId} = req.params;
     const { period, offset} = req.body;
-    console.log(userId);
     const [absences] = await Absence.getAbsencesByPeriodWhereUser(userId, period, parseInt(offset));
     res.status(200).json(absences);
   } catch (error) {
     console.error("Erreur détaillée:", error);
     res.status(500).json({ message: "Erreur lors de la récupération des absences", error });
+  }
+};
+
+exports.getGlobalTodayStats = async (req, res) => {
+  try {
+    const [stats] = await Absence.getGlobalAttendanceStats();
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getGlobalTodayStatsEmploye = async (req, res) => {
+  try {
+    const {userId} = req.params;
+    const [stats] = await Absence.getUserAttendanceStats(userId);
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// exports.suggestDates = async (req, res) => {
+//   try {
+//     const { idAbsence } = req.params;
+//     const { dateDebutAbsence, dateFinAbsence, nombre_jour_conge } = req.body;
+
+//     const absence = await Absence.getSuggestionStatus(idAbsence);
+    
+//     if (!absence) {
+//       return res.status(404).send({ message: "Absence not found" });
+//     }
+
+//     await absence.suggestDates({
+//       suggested_dates: {
+//         dateDebutAbsence,
+//         dateFinAbsence,
+//         nombre_jour_conge
+//       },
+//       status_suggestion: 'attente',
+//       statut: 'suggestion_attente'
+//     });
+
+//     res.send({ 
+//       message: "Suggestion sent successfully",
+//       data: absence 
+//     });
+
+//   } catch (error) {
+//     res.status(500).send({
+//       message: error.message || "Error occurred while suggesting dates"
+//     });
+//   }
+// };
+
+// exports.respondToSuggestion = async (req, res) => {
+//   try {
+//     const { idAbsence } = req.params;
+//     const { accepted } = req.body;
+
+//     const absence = await Absence.getSuggestionStatus(idAbsence);
+    
+//     if (!absence) {
+//       return res.status(404).send({ message: "Absence not found" });
+//     }
+
+//     if (accepted) {
+//       await absence.respondToSuggestion({
+//         dateDebutAbsence: absence.suggested_dates.dateDebutAbsence,
+//         dateFinAbsence: absence.suggested_dates.dateFinAbsence,
+//         nombre_jour_conge: absence.suggested_dates.nombre_jour_conge,
+//         suggested_dates: null,
+//         suggestion_status: 'oui',
+//         statut: 'accepte'
+//       });
+//     } else {
+//       await absence.respondToSuggestion({
+//         suggested_dates: null,
+//         suggestion_status: 'non',
+//         statut: 'refuse'
+//       });
+//     }
+
+//     res.send({
+//       message: `Suggestion ${accepted ? 'accepted' : 'rejected'} successfully`,
+//       data: absence
+//     });
+
+//   } catch (error) {
+//     res.status(500).send({
+//       message: error.message || "Error occurred while responding to suggestion"
+//     });
+//   }
+// };
+
+
+exports.suggestDates = async (req, res) => {
+  const { idAbsence } = req.params;
+  const suggestionData = {
+    dateDebutAbsence: req.body.dateDebutAbsence,
+    dateFinAbsence: req.body.dateFinAbsence,
+    nombre_jour_conge: req.body.nombre_jour_conge
+  };
+
+  try {
+    const result = await Absence.suggestDates(idAbsence, suggestionData);
+    res.status(200).json({
+      success: true,
+      message: "Suggestion de dates envoyée avec succès",
+      data: result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la suggestion de dates",
+      error: error.message
+    });
+  }
+};
+
+exports.respondToSuggestion = async (req, res) => {
+  const { idAbsence } = req.params;
+  const { accepted } = req.body;
+  console.log(req.body);
+
+  try {
+    const result = await Absence.respondToSuggestion(idAbsence, accepted);
+    res.status(200).json({
+      success: true,
+      message: accepted ? "Suggestion acceptée" : "Suggestion refusée",
+      data: result
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la réponse à la suggestion",
+      error: error
+    });
   }
 };

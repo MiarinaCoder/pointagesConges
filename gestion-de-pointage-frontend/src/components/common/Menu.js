@@ -203,6 +203,7 @@ import {
   FaUserShield,
   FaCog,
   FaFileAlt,
+  FaBook,
   // FaUserCircle
 } from "react-icons/fa";
 import styles from "../../styles/components/Menu.module.css";
@@ -225,6 +226,7 @@ export default function Menu() {
       { label: "Congés", path: "/conge", icon: FaCalendarAlt },
       { label: "Rattrapages", path: "/rattrapages", icon: FaSync },
       { label: "Justifications", path: "/justifications", icon: FaFileAlt },
+      { label: "Documentation", path: "/documentation", icon: FaBook },
     ],
     admin: [
       { label: "Pénalités", path: "/penalites", icon: FaExclamationTriangle },

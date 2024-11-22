@@ -136,9 +136,9 @@ export default function AbsencesStats({userId}) {
             <thead>
               <tr>
                 <th>Employé</th>
-                <th>Date Début</th>
-                <th>Date Fin</th>
-                <th>Durée</th>
+                <th>Date Absence</th>
+                {/* <th>Date Fin</th>*/}
+                <th>Durée</th> 
               </tr>
             </thead>
             <tbody>
@@ -148,13 +148,14 @@ export default function AbsencesStats({userId}) {
                     {`${absence.prenom} ${absence.nom}`}
                   </td>
                   <td>{moment(absence.dateDebutAbsence).format("DD MMMM YYYY")}</td>
-                  <td>{moment(absence.dateFinAbsence).format("DD MMMM YYYY")}</td>
+                  {/* <td>{moment(absence.dateFinAbsence).format("DD MMMM YYYY")}</td>
                   <td>
                     {moment(absence.dateFinAbsence).diff(
                       moment(absence.dateDebutAbsence),
                       'days'
                     ) + 1} jour(s)
-                  </td>
+                  </td> */}
+                  <td>{absence.nombre_jour_conge} jours</td>
                 </tr>
               ))}
             </tbody>

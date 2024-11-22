@@ -1,0 +1,124 @@
+.historyContainer {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.historyHeader h2 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.backButton {
+  padding: 0.6rem 1.2rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #2980b9;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.historyTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.historyTable thead tr {
+  background-color: #f8f9fa;
+}
+
+.historyTable th,
+.historyTable td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.historyTable th {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.historyTable tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.activeStatus,
+.completedStatus {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: inline-block;
+}
+
+.activeStatus {
+  background-color: #e8f5e9;
+  color: #2ecc71;
+}
+
+.completedStatus {
+  background-color: #f5f6fa;
+  color: #7f8c8d;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #f5f6fa;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #3498db;
+}
+
+.error {
+  color: #e74c3c;
+  text-align: center;
+  padding: 2rem;
+  background-color: #fdf0ed;
+  border-radius: 6px;
+}

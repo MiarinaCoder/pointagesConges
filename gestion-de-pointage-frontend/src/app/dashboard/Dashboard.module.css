@@ -7,7 +7,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: calc(100% - 250px); /* Adjust based on your sidebar width */
+  width: calc(100% - 250px); 
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 100;
@@ -92,7 +92,7 @@
 }
 
 .dashboardContent {
-  padding: 100px 30px 30px;
+  padding: 200px 30px 30px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -106,6 +106,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 30px;
+  min-width: 0;
 }
 
 .sessionsSection,
@@ -113,10 +114,27 @@
   background: white;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-@media (max-width: 1024px) {
+.sessionsSection {
+  overflow-x: auto;
+  min-width: 320px;
+}
+
+.sessionsSection table {
+  min-width: 100%;
+  white-space: nowrap;
+}
+
+.chartSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 320px;
+}
+
+@media screen and (max-width: 1024px) {
   .topHeader {
     width: 100%;
   }
@@ -129,10 +147,64 @@
   .mainGrid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 768px) {
-  .dashboardContainer {
-    padding: 16px;
+  .sessionsSection,
+  .chartSection {
+    width: 100%;
+    margin-bottom: 20px;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .dashboardContent {
+    padding: 80px 15px 15px;
+  }
+
+  .topHeader {
+    width: 100%;
+  }
+
+  .headerContent {
+    padding: 10px 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .dashboardContent {
+    padding: 70px 10px 10px;
+  }
+
+  .sessionsSection,
+  .chartSection {
+    padding: 15px;
+  }
+}
+
+.profileDetails h3 {
+  margin: 0;
+  color: #4a5568;
+  font-size: 1rem;
+}
+
+.profileDetails p {
+  margin: 0;
+  color: #718096;
+  font-size: 1rem;
+}
+
+.sessionsSection h2,
+.chartSection h2 {
+  color: #4a5568;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .mainGrid {
+    flex-direction: row;
+  }
+  
+  .chartSection {    width: auto;
+  }
+}
+

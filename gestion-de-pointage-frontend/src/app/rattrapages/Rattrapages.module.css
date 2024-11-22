@@ -5,7 +5,8 @@
 }
 
 .pageHeader {
-  margin-bottom: 2rem;
+  margin-top: 1rem;
+  /* margin-bottom: 2rem; */
 }
 
 .title {
@@ -15,7 +16,73 @@
   text-align: center;
 }
 
+/* .actionBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: flex-start;
+} */
+
 .actionBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* .searchBar {
+  width: 300px;
+  position: relative;
+}
+
+.newRequestButton {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+} */
+
+.searchBar {
+  display: inline-flex;
+  align-items: center;
+  width: 500px;
+  margin-right: 10px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+.newRequestButton {
+  height: 50px;
+  width: 400px;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.newRequestButton:hover {
+  background-color: #45a049;
+}
+
+.buttonIcon {
+  font-size: 1rem;
+}
+
+
+/* .actionBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,7 +94,7 @@
   position: relative;
   flex: 1;
   max-width: 400px;
-}
+} */
 
 .searchBar input {
   width: 100%;
@@ -416,7 +483,7 @@
   justify-content: center;
 }
 
-.newRequestButton {
+/* .newRequestButton {
   background: linear-gradient(135deg, #28a745, #20c997);
   color: white;
   border: none;
@@ -433,7 +500,7 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
   background: linear-gradient(135deg, #218838, #1ba385);
-}
+} */
 
 .buttonContent {
   display: flex;
@@ -442,9 +509,9 @@
   gap: 1rem;
 }
 
-.buttonIcon {
+/* .buttonIcon {
   font-size: 1.5rem;
-}
+} */
 
 .buttonText {
   font-size: 1.1rem;
@@ -467,3 +534,10 @@
     font-size: 1rem;
   }
 }
+
+.searchAndButtonContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+

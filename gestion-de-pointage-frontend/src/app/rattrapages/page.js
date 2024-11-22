@@ -268,6 +268,7 @@ export default function Rattrapages() {
       <div className={styles.rattrapagesContainer}>
         <div className={styles.pageHeader}>
           <h1 className={styles.title}>Gestion des Rattrapages</h1>
+          <div className={styles.searchAndButtonContainer}>
           <div className={styles.actionBar}>
             <div className={styles.searchBar}>
               <FaSearch className={styles.searchIcon} />
@@ -278,7 +279,7 @@ export default function Rattrapages() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <select 
+            {/* <select 
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className={styles.filterSelect}
@@ -287,10 +288,20 @@ export default function Rattrapages() {
               <option value="pending">En attente</option>
               <option value="approved">Approuvé</option>
               <option value="rejected">Rejeté</option>
-            </select>
+            </select> */}
           </div>
+          {user?.role !== 'administrateur' && (
+        <button 
+          className={styles.newRequestButton}
+          onClick={() => setShowFormModal(true)}
+        >
+          <FaPlus className={styles.buttonIcon} />
+          <span>Nouvelle demande</span>
+        </button>
+      )}
         </div>
-        {loading && <div className={styles.loader}>Chargement...</div>}
+        </div>
+        {/* {loading && <div className={styles.loader}>Chargement...</div>}
         {user?.role !== 'administrateur' && (
           <div className={styles.newRequestSection}>
             <button 
@@ -304,7 +315,7 @@ export default function Rattrapages() {
               <small className={styles.buttonHint}>Cliquez pour créer une nouvelle demande</small>
             </button>
           </div>
-        )}
+        )} */}
         <div className={styles.rattrapagesList}>
           {filteredRattrapages
             .slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE)

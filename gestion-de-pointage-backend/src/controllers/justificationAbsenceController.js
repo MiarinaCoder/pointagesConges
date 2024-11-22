@@ -43,50 +43,92 @@ const justificationController = {
   getById: async (req, res) => {
     try {
       const justification = await JustificationAbsence.getById(req.params.id);
-      
+  
       if (!justification) {
         return res.status(404).json({
           success: false,
-          message: 'Justification not found'
+          message: 'Justification not found',
         });
       }
-
+  
       res.setHeader('Content-Type', justification.typeDeFichier);
       res.setHeader('Content-Disposition', `attachment; filename="${justification.nomFichier}"`);
       res.send(justification.fichierJustificatif);
-
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Error retrieving justification',
-        error: error.message
+        error: error.message,
       });
     }
   },
+  
 
-  getAll: async(req, res) => {
+  // getById: async (req, res) => {
+  //   try {
+  //     const justification = await JustificationAbsence.getById(req.params.id);
+      
+  //     if (!justification) {
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: 'Justification not found'
+  //       });
+  //     }
+
+  //     res.setHeader('Content-Type', justification.typeDeFichier);
+  //     res.setHeader('Content-Disposition', `attachment; filename="${justification.nomFichier}"`);
+  //     res.send(justification.fichierJustificatif);
+
+  //   } catch (error) {
+  //     res.status(500).json({
+  //       success: false,
+  //       message: 'Error retrieving justification',
+  //       error: error.message
+  //     });
+  //   }
+  // },
+
+  getAll: async (req, res) => {
     try {
-      const justification = await JustificationAbsence.getAll();
-      
-      if (!justification) {
-        return res.status(404).json({
-          success: false,
-          message: 'Justification not found'
-        });
-      }
-
-      res.setHeader('Content-Type', justification.typeDeFichier);
-      res.setHeader('Content-Disposition', `attachment; filename="${justification.nomFichier}"`);
-      res.send(justification.fichierJustificatif);
-
+      const justifications = await JustificationAbsence.getAll();
+  
+      res.json({
+        success: true,
+        data: justifications,
+      });
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: 'Error retrieving justification',
-        error: error.message
+        message: 'Error retrieving justifications',
+        error: error.message,
       });
     }
   },
+  
+
+  // getAll: async(req, res) => {
+  //   try {
+  //     const justification = await JustificationAbsence.getAll();
+      
+  //     if (!justification) {
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: 'Justification not found'
+  //       });
+  //     }
+
+  //     res.setHeader('Content-Type', justification.typeDeFichier);
+  //     res.setHeader('Content-Disposition', `attachment; filename="${justification.nomFichier}"`);
+  //     res.send(justification.fichierJustificatif);
+
+  //   } catch (error) {
+  //     res.status(500).json({
+  //       success: false,
+  //       message: 'Error retrieving justification',
+  //       error: error.message
+  //     });
+  //   }
+  // },
 
   delete: async (req, res) => {
     try {

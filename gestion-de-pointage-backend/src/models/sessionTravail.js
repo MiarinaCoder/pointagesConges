@@ -1,14 +1,40 @@
 const db = require('../config/db');
 
 const SessionsTravail = {
-  // create: (session) => {
-  //   return db.query('INSERT INTO sessionTravail (id_utilisateur, heureDebut) VALUES (?, ?)', [session.id_utilisateur, session.heureDebut]);
-  // },
-  create: (session) => {
-    return db.query(`
-      CALL sp_create_session(?, ?)
-    `, [session.id_utilisateur, session.heureDebut]);
-  },
+
+
+
+  create: async (session) => {
+    try {
+      const currentHour = new Date(session.heureDebut).getHours();
+      
+      if (currentHour < 8 || currentHour > 23) {
+
+        const error = new Error('Les sessions ne peuvent être créées qu\'entre 8h et 16h');
+        error.code = 'HOURS_RESTRICTION';
+        throw error;
+      }
+
+      const [existingSessions] = await db.query(
+        'SELECT * FROM sessionTravail WHERE id_utilisateur = ? AND heureFin IS NULL', 
+        [session.id_utilisateur]
+      );
+
+      if (existingSessions.length > 0) {
+        const error = new Error('Une session active existe déjà pour cet utilisateur');
+        error.code = 'ACTIVE_SESSION';
+        throw error;
+      }
+
+
+      return db.query(`CALL sp_create_session(?, ?)`, 
+        [session.id_utilisateur, session.heureDebut]
+      );
+    } catch (error) {
+      throw error;
+    }
+  },    
+  
   addSession: (session) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // set time to 00:00:00.000
@@ -30,70 +56,53 @@ const SessionsTravail = {
       .catch(error => { throw error });
   },
 
-//   addSession: (session) => {
-//     const today = new Date();
-//     today.setHours(0, 0, 0, 0); // set time to 00:00:00.000
-//     const tomorrow = new Date(today);
-//     tomorrow.setDate(tomorrow.getDate() + 1);
-    
-//     // Vérification de la présence d'une session existante
-//     return db.query('SELECT * FROM sessionTravail WHERE id_utilisateur = ? AND heureDebut >= ? AND heureDebut < ?', 
-//     [session.id_utilisateur, today, tomorrow])
-//         .then(([rows]) => {
-//             if (rows.length > 0) {
-//                 // Une session existe déjà pour cet utilisateur aujourd'hui
-//                 throw new Error('Une session existe déjà pour cet utilisateur aujourd\'hui');
-//             } else {
-//                 // Insérer la nouvelle session si aucune n'existe
-//                 return db.query('INSERT INTO sessionTravail (id_utilisateur, heureDebut) VALUES (?, ?)', [session.id_utilisateur, session.heureDebut]);
-//             }
-//         })
-//         .catch(error => {
-//             throw error;
-//         });
-// },
-
-
-  // update: (idSession, session) => {
-  //   return db.query('UPDATE sessionTravail SET heureFin = ?, heuresTravaillees = ? WHERE idSession = ?', [session.heureFin, session.heuresTravaillees, idSession]);
-  // },
-
-  // update: function(idSession, session) {
-  //   return db.query('SELECT heureDebut FROM sessionTravail WHERE idSession = ?', [idSession])
-  //     .then(([rows]) => {
-  //       if (!rows.length) {
-  //         throw new Error('Session non trouvée');
-  //       }
-  //       const debut = moment(rows[0].heureDebut);
-  //       const fin = moment(session.heureFin);
-  //       const duree = moment.duration(fin.diff(debut));
-  //       const heuresTravaillees = duree.asHours();
-  //       return db.query('UPDATE sessionTravail SET heureFin = ?, heuresTravaillees = ? WHERE idSession = ?', [session.heureFin, heuresTravaillees, idSession]);
-  //     });
-  // },
-
   update: (idSession, session) => {
     return db.query('CALL sp_update_session(?, ?)', [idSession, session.heureFin]);
   },
   getSessionTravail: (id_utilisateur) => {
-    return db.query('SELECT * FROM sessionTravail WHERE id_utilisateur = ?', [id_utilisateur]);
+    return db.query('SELECT * FROM sessionTravail WHERE id_utilisateur = ? ORDER BY heureDebut DESC', [id_utilisateur]);
   },
-  // getTotalHeuresTravaillees: async function(id_utilisateur) {
-  //   const sessions = await this.getSessionTravail(id_utilisateur);
-    
-  //   let totalHeuresTravaillees = 0;
-  //   for (let session of sessions) {
-  //     const debut = moment(session.heureDebut);
-  //     const fin = moment(session.heureFin);
-  //     const duree = moment.duration(fin.diff(debut));
-  //     totalHeuresTravaillees += duree.asHours();
-  //   }
 
-  //   return totalHeuresTravaillees;
-  // },
   getHeureDebut: (sessionId) => {
     return db.query('SELECT heureDebut FROM sessionTravail WHERE idSession = ?', [sessionId]);
   },
+
+  getWeeklyHours: (userId) => {
+    return db.query(`
+      SELECT (heureDebut) as jour,
+        SUM(TIMESTAMPDIFF(HOUR, heuredebut, heurefin)) as heures_jour,
+        SUM(TIMESTAMPDIFF(MINUTE, heuredebut, heurefin))/60 as heures_precises
+      FROM sessionTravail 
+      WHERE id_utilisateur = ? 
+        AND WEEK(heureDebut) = WEEK(CURRENT_DATE)
+        AND DAYOFWEEK(heureDebut) BETWEEN 2 AND 6
+      GROUP BY DAYNAME(heureDebut)
+      ORDER BY DAYOFWEEK(heureDebut)`,
+      [userId]
+    );
+  },
+
+  getTotalWeeklyHours: (userId) => {
+    return db.query(`
+      SELECT 
+        SUM(TIMESTAMPDIFF(MINUTE, heureDebut, heurefin))/60 as total_heures_semaine
+      FROM sessiontravail
+      WHERE id_utilisateur = ?
+        AND WEEK(heuredebut) = WEEK(CURRENT_DATE)
+        AND DAYOFWEEK(heuredebut) BETWEEN 2 AND 6`,
+      [userId]
+    );
+  },
+
+  // Add these to the SessionsTravail object
+  // getActiveSession: (userId) => {
+  //   return db.query('SELECT * FROM sessionTravail WHERE id_utilisateur = ? AND heureFin IS NULL', [userId]);
+  // },
+
+  getSessionById: (sessionId) => {
+    return db.query('SELECT * FROM sessionTravail WHERE idSession = ?', [sessionId]);
+  }
+
 };
 
 module.exports = SessionsTravail;

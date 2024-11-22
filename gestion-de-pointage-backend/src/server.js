@@ -11,6 +11,8 @@ const absenceRoutes=require('./routes/absenceRoutes');
 const penaliteRoutes=require('./routes/penaliteRoutes');
 const parametresRoutes = require('./routes/parametresTravailRoutes');
 const justificationRoutes = require('./routes/justificationRoutes');
+const retardRoutes=require('./routes/retardRoutes');
+const verificationRoutes=require('./routes/verificationRoutes');
 
 dotenv.config();
 
@@ -23,6 +25,7 @@ app.use(cors({
     // credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
   }));
+  
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -34,6 +37,9 @@ app.use('/api/absence', absenceRoutes);
 app.use('/api/penalites', penaliteRoutes);
 app.use('/api/parametres', parametresRoutes);
 app.use('/api/justifications', justificationRoutes);
+app.use('/api/retards', retardRoutes);
+app.use('/api/verification', verificationRoutes);
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

@@ -18,12 +18,19 @@ const JustificationAbsence = {
     return rows[0];
   },
 
+  // getAll: async () => {
+  //   const [rows] = await db.execute(
+  //     'SELECT * FROM justificationabsence', 
+  //   );
+  //   return rows[0];
+  // },
   getAll: async () => {
     const [rows] = await db.execute(
-      'SELECT * FROM justificationabsence', 
+      'SELECT idJustification, idAbsence, nomFichier, typeDeFichier, dateAjout FROM justificationabsence'
     );
-    return rows[0];
+    return rows; // Retournez tous les fichiers sans leur contenu
   },
+  
 
   delete: async (id) => {
     const [result] = await db.execute(

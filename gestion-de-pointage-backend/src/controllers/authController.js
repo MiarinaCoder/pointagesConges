@@ -211,42 +211,66 @@ exports.login = async (req, res) => {
 
     // Démarrer une nouvelle session de travail immédiatement après la connexion
     const currentTimestamp = new Date();
-    const [result] = await SessionsTravail.create({
-      id_utilisateur: utilisateur.id,
-      heureDebut: currentTimestamp,
-    });
+    try {
+      const [result] = await SessionsTravail.create({
+        id_utilisateur: utilisateur.id,
+        heureDebut: currentTimestamp,
+      });
 
-    // Try these different approaches:
-    const sessionId = result[0]?.idSession || result[0]?.[0]?.idSession || result.insertId;
+      // Try these different approaches:
+      const sessionId = result[0]?.idSession || result[0]?.[0]?.idSession || result.insertId;
 
-    // Générer un token JWT sécurisé avec le sessionId inclus dans le payload
-    const token = jwt.sign(
-      {
+      // Générer un token JWT sécurisé avec le sessionId inclus dans le payload
+      const token = jwt.sign(
+        {
+          nom: utilisateur.nom,
+          prenom: utilisateur.prenom,
+          userId: utilisateur.id,
+          email: utilisateur.email,
+          role: utilisateur.role,
+          genre: utilisateur.genre,
+          sessionId: sessionId, // On inclut le sessionId dans le token
+          sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
+        },
+        process.env.JWT_SECRET, // Utiliser un secret JWT sécurisé via un fichier .env
+        { expiresIn: "9h", algorithm: "HS256" } // Configuration d'une expiration de 8 heures et algorithme sécurisé
+      );
+
+      // Répondre avec le token, le démarrage de la session et d'autres infos utiles
+      res.json({
+        token,
+        sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
         nom: utilisateur.nom,
         prenom: utilisateur.prenom,
         userId: utilisateur.id,
-        email: utilisateur.email,
+        sessionId: sessionId,
         role: utilisateur.role,
         genre: utilisateur.genre,
-        sessionId: sessionId, // On inclut le sessionId dans le token
-        sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
-      },
-      process.env.JWT_SECRET, // Utiliser un secret JWT sécurisé via un fichier .env
-      { expiresIn: "8h", algorithm: "HS256" } // Configuration d'une expiration de 8 heures et algorithme sécurisé
-    );
+        message: "Connexion réussie",
+      });
+    } catch (error) {
+      console.error("Erreur lors de la connexion:", error);
+      
+      // Add proper error handling
+      if (error.code === 'ACTIVE_SESSION') {
+        return res.status(400).json({ 
+          code: 'ACTIVE_SESSION',
+          message: 'Une session active existe déjà pour cet utilisateur'
+        });
+      }
+      
+      if (error.code === 'HOURS_RESTRICTION') {
+        return res.status(400).json({
+          code: 'HOURS_RESTRICTION', 
+          message: 'Les sessions ne peuvent être créées qu\'entre 8h et 16h'
+        });
+      }
 
-    // Répondre avec le token, le démarrage de la session et d'autres infos utiles
-    res.json({
-      token,
-      sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
-      nom: utilisateur.nom,
-      prenom: utilisateur.prenom,
-      userId: utilisateur.id,
-      sessionId: sessionId,
-      role: utilisateur.role,
-      genre: utilisateur.genre,
-      message: "Connexion réussie",
-    });
+      // Default error
+      res.status(500).json({ 
+        message: error.message || "Erreur serveur"
+      });
+    }
   } catch (error) {
     console.error("Erreur lors de la connexion:", error);
     res.status(500).json({ message: "Erreur serveur" });
@@ -295,6 +319,7 @@ exports.login = async (req, res) => {
 //     res.status(500).json({ message: "Erreur serveur lors de la réinitialisation du mot de passe" });
 //   }
 // };
+
 
 exports.requestPasswordReset = async (req, res) => {
   const { email } = req.body;

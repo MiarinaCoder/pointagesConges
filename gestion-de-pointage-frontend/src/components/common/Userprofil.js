@@ -29,10 +29,10 @@ const UserProfile = ({ user }) => {
               <FaBriefcase className={styles.roleIcon} />
               {user?.role || 'Utilisateur'}
             </span>
-            <span className={styles.userDepartment}>
+            {/* <span className={styles.userDepartment}>
               <FaBuilding className={styles.departmentIcon} />
               {user?.departement || 'Non assigné'}
-            </span>
+            </span> */}
           </div>
         </div>
         

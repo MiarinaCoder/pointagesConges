@@ -155,14 +155,14 @@ export default function PenaliteList({ userId }) {
           </select>
         </div>
 
-        {!userId && (
+        {/* {!userId && (
           <button 
             className={styles.addButton}
             onClick={() => openModal()}
           >
             <FaPlus /> Nouvelle pénalité
           </button>
-        )}
+        )} */}
       </div>
 
       {loading ? (
