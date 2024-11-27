@@ -37,8 +37,9 @@ export default function JustificationsPage() {
   return (
     <Layout>
       <div className="container">
-        <h1>Justifications d'absence</h1>
-        <JustificationForm onSuccess={handleSuccess} />
+        <h1>Justifications de retard</h1>
+        <p></p>
+        {/* <JustificationForm onSuccess={handleSuccess} /> */}
         <JustificationList 
           justifications={justifications}
           // onDelete={handleDelete}

@@ -70,7 +70,7 @@ import { useDropzone } from "react-dropzone";
 import styles from "./JustificationForm.module.css";
 import api from "@/services/api";
 
-export default function JustificationForm({ idAbsence, onSuccess }) {
+export default function JustificationForm({ idRetard, onSuccess }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -84,7 +84,7 @@ export default function JustificationForm({ idAbsence, onSuccess }) {
 
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("idAbsence", idAbsence);
+      formData.append("idRetard", idRetard);
 
       try {
         const response = await api.post("/justifications", formData, {
@@ -104,7 +104,7 @@ export default function JustificationForm({ idAbsence, onSuccess }) {
         setUploading(false);
       }
     },
-    [idAbsence, onSuccess]
+    [idRetard, onSuccess]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

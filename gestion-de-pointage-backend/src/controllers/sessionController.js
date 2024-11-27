@@ -61,27 +61,37 @@ exports.getWeeklyHours = async (req, res) => {
   }
 };
 
-// Add this to existing exports
 exports.cleanupSession = async (req, res) => {
   const { sessionId } = req.body;
   const endTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
   try {
-    const result = await SessionsTravail.update(sessionId, { heureFin: endTime });
+    const [session] = await SessionsTravail.getSessionById(sessionId);
+    
+    if (!session) {
+      return res.status(404).json({ message: 'Session non trouvée' });
+    }
+
+    if (session.heureFin) {
+      return res.status(400).json({ message: 'Session déjà terminée' });
+    }
+
+    await SessionsTravail.update1(sessionId, { heureFin: endTime });
+    
     res.status(200).json({ 
       success: true,
-      message: 'Session terminée automatiquement',
+      message: 'Session terminée avec succès',
       timestamp: endTime
     });
   } catch (error) {
+    console.error('Erreur lors du nettoyage de la session:', error);
     res.status(500).json({ 
       success: false,
-      message: 'Erreur serveur lors du nettoyage de la session'
+      message: 'Erreur lors de la terminaison de la session'
     });
   }
 };
 
-// Modify existing terminerSession to include validation
 exports.terminerSession = async (req, res) => {
   const { id_session } = req.params;
   let { endTime } = req.body;

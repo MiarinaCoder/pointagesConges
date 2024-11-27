@@ -3,7 +3,7 @@ const db = require('../config/db');
 const Verification = {
   create: async (idUtilisateur,aRepondu) => {
     const [result] = await db.execute(
-      'INSERT INTO Verification (idUtilisateur, dateVerification, aRepondu, delaiReponse) VALUES (?, NOW(), 60, ?)',
+      'INSERT INTO Verification (idUtilisateur, dateVerification, aRepondu, delaiReponse) VALUES (?, NOW(), ?, 60)',
       [idUtilisateur,aRepondu]
     );
     return result.insertId;

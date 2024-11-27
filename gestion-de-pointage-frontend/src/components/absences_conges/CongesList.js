@@ -887,7 +887,7 @@ const handleSuggestionResponse = async (congeId, accepted) => {
                                         <FaTrash className={styles.actionIcon} />
                                         <span>Supprimer</span>
                                       </button>
-          
+
                                       {conge.statut === "en_attente" && (conge.type_de_conge !== "congé de maternité" || conge.type_de_conge !== "congé de paternité") && (
                                         <>
                                     <button

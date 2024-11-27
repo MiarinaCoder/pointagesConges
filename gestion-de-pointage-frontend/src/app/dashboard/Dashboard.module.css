@@ -47,50 +47,96 @@
   color: #718096;
   font-size: 1rem;
 }
+  .timerSection {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
 
-.timerSection {
-  background: #f8fafc;
-  padding: 10px 20px;
-  border-radius: 8px;
-}
+  .timerContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-.timerInfo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #718096;
-  font-size: 1rem;
-  margin-bottom: 5px;
-}
+  .timerHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 
-.timer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+  .calendarIcon {
+    font-size: 1.8rem;
+    color: #4CAF50;
+  }
 
-.timeBlock {
-  text-align: center;
-  min-width: 60px;
-}
+  .timerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
 
-.timeBlock span {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #2d3748;
-}
+  .timerInfo h4 {
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+  }
 
-.timeBlock small {
-  display: block;
-  color: #718096;
-  font-size: 0.75rem;
-}
+  .timerInfo span {
+    color: #666;
+    font-size: 0.9rem;
+  }
 
-.separator {
-  color: #718096;
-  font-weight: bold;
-}
+  .progressBar {
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+  }
 
+  .progressFill {
+    height: 100%;
+    transition: width 1s ease-in-out, background-color 1s ease-in-out;
+  }
+
+  .timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .timeBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+    padding: 0.5rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+  }
+
+  .timeBlock span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .timeBlock small {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .separator {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #666;
+  }
+
+  .warning span {
+    color: #ff4444;
+  }
 .dashboardContent {
   padding: 200px 30px 30px;
   max-width: 1400px;

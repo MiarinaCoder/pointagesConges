@@ -27,7 +27,7 @@ const UserProfile = ({ user }) => {
           <div className={styles.userMeta}>
             <span className={styles.userRole}>
               <FaBriefcase className={styles.roleIcon} />
-              {user?.role || 'Utilisateur'}
+              {user?.fonction === 'employe' ? 'employé' : user?.fonction || 'Utilisateur'}
             </span>
             {/* <span className={styles.userDepartment}>
               <FaBuilding className={styles.departmentIcon} />

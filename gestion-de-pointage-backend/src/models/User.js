@@ -2,10 +2,6 @@ const db = require('../config/db');
 const { sendEmail } = require("../services/emailService");
 
 const User = {
-  // updateResetToken: (email, resetToken, resetExpires) => {
-  //   return db.query('UPDATE Utilisateur SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE email = ?', [resetToken, resetExpires, email]);
-  // },
-
   getUserById: (id) => {
     return db.query(
       "SELECT id,matriculation,nom,prenom,adresse,email,fonction,role,statusMatrimoniale,genre FROM utilisateur WHERE id = ?",

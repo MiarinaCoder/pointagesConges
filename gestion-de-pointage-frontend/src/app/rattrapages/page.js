@@ -227,7 +227,7 @@ export default function Rattrapages() {
           </div>
           <div className={styles.detailItem}>
             <label>Statut</label>
-            <p className={styles[rattrapage.statut]}>{rattrapage.statut}</p>
+            <p className={styles[rattrapage.statut]}>{rattrapage.status}</p>
           </div>
           {rattrapage.commentaire && (
             <div className={styles.detailItem}>
@@ -290,7 +290,7 @@ export default function Rattrapages() {
               <option value="rejected">Rejeté</option>
             </select> */}
           </div>
-          {user?.role !== 'administrateur' && (
+          {/* {user?.role !== 'administrateur' && (
         <button 
           className={styles.newRequestButton}
           onClick={() => setShowFormModal(true)}
@@ -298,7 +298,7 @@ export default function Rattrapages() {
           <FaPlus className={styles.buttonIcon} />
           <span>Nouvelle demande</span>
         </button>
-      )}
+      )} */}
         </div>
         </div>
         {/* {loading && <div className={styles.loader}>Chargement...</div>}
@@ -324,7 +324,7 @@ export default function Rattrapages() {
                 <div className={styles.cardHeader}>
                   <h3>{rattrapage.nom} {rattrapage.prenom}</h3>
                   <span className={`${styles.statusBadge} ${styles[rattrapage.statut]}`}>
-                    {rattrapage.statut}
+                    {rattrapage.status}
                   </span>
                 </div>
                 <div className={styles.cardBody}>

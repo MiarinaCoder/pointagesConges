@@ -30,7 +30,8 @@ export const AuthProvider = ({ children }) => {
           prenom: decoded.prenom,
           email: decoded.email,
           genre: decoded.genre,
-          role: decoded.role
+          role: decoded.role,
+          fonction: decoded.fonction,
         });
         setIsAuthenticated(true);
       } catch (err) {
@@ -126,14 +127,16 @@ export const AuthProvider = ({ children }) => {
         email,
         role: response.data.role,
         prenom: response.data.prenom,
-        nom: response.data.nom  
+        nom: response.data.nom,
+        fonction: response.data.fonction,
       }));
       
       setUser({
         id: response.data.userId,
         email,
         role: response.data.role,
-        prenom: response.data.prenom
+        prenom: response.data.prenom,
+        fonction: response.data.fonction,
       });
       setIsAuthenticated(true);
   

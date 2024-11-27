@@ -386,3 +386,46 @@
   display: flex;
   gap: 0.5rem;
 }
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.actionButton.delete {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.actionButton.modify {
+  background-color: #1890ff;
+  color: white;
+}
+
+.actionButton.approve {
+  background-color: #52c41a;
+  color: white;
+}
+
+.actionButton.reject {
+  background-color: #ff7875;
+  color: white;
+}
+
+.actionButton:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}

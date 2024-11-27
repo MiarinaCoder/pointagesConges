@@ -18,12 +18,12 @@ const Retard = {
       };
     }
 
-    //TIME_FORMAT(r.dureeRetard, '%i') as dureeRetard,
     const [retards] = await db.query(
       `
     SELECT 
     r.idRetard,
     r.idSession,
+    r.estJustifie,
     TIME_FORMAT(r.dureeRetard, '%H') AS heuresRetard,
     TIME_FORMAT(r.dureeRetard, '%i') AS minutesRetard,
     TIME_FORMAT(r.dureeRetard, '%s') AS secondesRetard,
@@ -53,7 +53,42 @@ const Retard = {
       heureArrivee: retard.heureArrivee,
       idRetard: retard.idRetard,
       idSession: retard.idSession,
+      isJustified: retard.estJustifie === 1
     };
   },
+
+  updateJustification: async (idRetard) => {
+    const [result] = await db.query(
+      "UPDATE retards SET estJustifie = 1 WHERE idRetard = ?",
+      [idRetard]
+    );
+    
+    if (result.affectedRows === 0) {
+      throw new Error("Retard not found");
+    }
+    
+    return {
+      success: true,
+      message: "Justification updated successfully"
+    };
+  },
+
+  // Nouvelle méthode pour mettre à jour uniquement la description
+  updateDescription: async (idRetard, description) => {
+    const [result] = await db.query(
+      "UPDATE retards SET description = ? WHERE idRetard = ?",
+      [description, idRetard]
+    );
+    
+    if (result.affectedRows === 0) {
+      throw new Error("Retard not found");
+    }
+    
+    return {
+      success: true,
+      message: "Description updated successfully"
+    };
+  }
 };
-module.exports = Retard;
+
+module.exports= Retard;

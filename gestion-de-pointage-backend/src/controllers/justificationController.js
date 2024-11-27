@@ -1,11 +1,9 @@
-const JustificationAbsence = require('../models/justificationAbsence');
+const JustificationAbsence = require('../models/justification');
 const { validationResult } = require('express-validator');
 
 const justificationController = {
   create: async (req, res) => {
     try {
-      console.log(req.file); // Ajoutez ceci pour voir le contenu de req.file
-    
       if (!req.file) {
           return res.status(400).json({
               success: false,
@@ -19,16 +17,17 @@ const justificationController = {
       }
 
       const result = await JustificationAbsence.create({
-        // idAbsence: req.body.idAbsence,
+        idRetard: req.body.idRetard,
         fichierJustificatif: req.file.buffer,
         nomFichier: req.file.originalname,
-        typeDeFichier: req.file.mimetype
+        typeDeFichier: req.file.mimetype,
+        id_utilisateur: req.user.id // Get user ID from auth middleware
       });
 
       res.status(201).json({
         success: true,
         message: 'Justification uploaded successfully',
-        file:req.file,
+        file: req.file,
         id: result.insertId
       });
     } catch (error) {
@@ -62,31 +61,6 @@ const justificationController = {
       });
     }
   },
-  
-
-  // getById: async (req, res) => {
-  //   try {
-  //     const justification = await JustificationAbsence.getById(req.params.id);
-      
-  //     if (!justification) {
-  //       return res.status(404).json({
-  //         success: false,
-  //         message: 'Justification not found'
-  //       });
-  //     }
-
-  //     res.setHeader('Content-Type', justification.typeDeFichier);
-  //     res.setHeader('Content-Disposition', `attachment; filename="${justification.nomFichier}"`);
-  //     res.send(justification.fichierJustificatif);
-
-  //   } catch (error) {
-  //     res.status(500).json({
-  //       success: false,
-  //       message: 'Error retrieving justification',
-  //       error: error.message
-  //     });
-  //   }
-  // },
 
   getAll: async (req, res) => {
     try {
@@ -104,31 +78,6 @@ const justificationController = {
       });
     }
   },
-  
-
-  // getAll: async(req, res) => {
-  //   try {
-  //     const justification = await JustificationAbsence.getAll();
-      
-  //     if (!justification) {
-  //       return res.status(404).json({
-  //         success: false,
-  //         message: 'Justification not found'
-  //       });
-  //     }
-
-  //     res.setHeader('Content-Type', justification.typeDeFichier);
-  //     res.setHeader('Content-Disposition', `attachment; filename="${justification.nomFichier}"`);
-  //     res.send(justification.fichierJustificatif);
-
-  //   } catch (error) {
-  //     res.status(500).json({
-  //       success: false,
-  //       message: 'Error retrieving justification',
-  //       error: error.message
-  //     });
-  //   }
-  // },
 
   delete: async (req, res) => {
     try {

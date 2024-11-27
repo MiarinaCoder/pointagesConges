@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const justificationController = require('../controllers/justificationAbsenceController');
+const justificationController = require('../controllers/justificationController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const storage = multer.memoryStorage();

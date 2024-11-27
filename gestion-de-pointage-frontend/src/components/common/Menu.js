@@ -225,11 +225,11 @@ export default function Menu() {
       { label: "Absences", path: "/absences", icon: FaCalendarTimes },
       { label: "Congés", path: "/conge", icon: FaCalendarAlt },
       { label: "Rattrapages", path: "/rattrapages", icon: FaSync },
+      { label: "Pénalités", path: "/penalites", icon: FaExclamationTriangle },
       { label: "Justifications", path: "/justifications", icon: FaFileAlt },
       { label: "Documentation", path: "/documentation", icon: FaBook },
     ],
     admin: [
-      { label: "Pénalités", path: "/penalites", icon: FaExclamationTriangle },
       { label: "Gestion des utilisateurs", path: "/administrateur", icon: FaUserShield },
       { label: "Paramètres", path: "/parametres", icon: FaCog },
     ],

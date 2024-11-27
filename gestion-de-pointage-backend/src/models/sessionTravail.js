@@ -8,7 +8,7 @@ const SessionsTravail = {
     try {
       const currentHour = new Date(session.heureDebut).getHours();
       
-      if (currentHour < 8 || currentHour > 23) {
+      if (currentHour < 0 || currentHour > 23) {
 
         const error = new Error('Les sessions ne peuvent être créées qu\'entre 8h et 16h');
         error.code = 'HOURS_RESTRICTION';
@@ -59,6 +59,17 @@ const SessionsTravail = {
   update: (idSession, session) => {
     return db.query('CALL sp_update_session(?, ?)', [idSession, session.heureFin]);
   },
+  update1: async (idSession, session) => {
+    try {
+      const result = await db.query(
+        'UPDATE sessionTravail SET heureFin = ? WHERE idSession = ? AND heureFin IS NULL',
+        [session.heureFin, idSession]
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  },
   getSessionTravail: (id_utilisateur) => {
     return db.query('SELECT * FROM sessionTravail WHERE id_utilisateur = ? ORDER BY heureDebut DESC', [id_utilisateur]);
   },
@@ -93,11 +104,6 @@ const SessionsTravail = {
       [userId]
     );
   },
-
-  // Add these to the SessionsTravail object
-  // getActiveSession: (userId) => {
-  //   return db.query('SELECT * FROM sessionTravail WHERE id_utilisateur = ? AND heureFin IS NULL', [userId]);
-  // },
 
   getSessionById: (sessionId) => {
     return db.query('SELECT * FROM sessionTravail WHERE idSession = ?', [sessionId]);

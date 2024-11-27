@@ -1,10 +1,6 @@
 const Rattrapages = require("../models/rattrapages");
 const moment = require("moment");
 
-// function formatDate(dateString) {
-//   return moment(dateString, "YYYY-MM-DD").format("YYYY-MM-DD");
-// }
-
 exports.addRattrapage = async (req, res) => {
     try {
       const { date, hours, reason } = req.body;
@@ -35,69 +31,6 @@ exports.addRattrapage = async (req, res) => {
       res.status(500).json({ message: 'Erreur serveur lors de l\'ajout du rattrapage', error: error.message });
     }
   };
-  
-
-// exports.addRattrapage = async (req, res) => {
-//   try {
-//     console.log("Received data:", req.body);
-//     const { date, hours, reason } = req.body;
-//     const id_utilisateur = req.user.id;
-//     const formattedDate = formatDate(date);
-
-//     if (!moment(formattedDate, "YYYY-MM-DD", true).isValid()) {
-//       console.log("Invalid date:", date);
-//       return res.status(400).json({ message: "Format de date invalide" });
-//     }
-
-//     const result = await Rattrapages.addRattrapage({
-//       id_utilisateur,
-//       date: formattedDate,
-//       hours,
-//       reason,
-//     });
-//     res
-//       .status(201)
-//       .json({ message: "Rattrapage ajouté avec succès", id: result.insertId });
-//   } catch (error) {
-//     console.error("Erreur détaillée:", error);
-//     res
-//       .status(500)
-//       .json({
-//         message: "Erreur serveur lors de l'ajout du rattrapage",
-//         error: error.message,
-//       });
-//   }
-// };
-
-// exports.addRattrapage = async (req, res) => {
-//   try {
-//     const { date, hours, reason } = req.body;
-//     const id_utilisateur = req.user.id;
-//     const formattedDate = formatDate(date);
-
-//     if (!moment(formattedDate, 'YYYY-MM-DD', true).isValid()) {
-//       return res.status(400).json({ message: 'Format de date invalide' });
-//     }
-
-//     const result = await Rattrapages.addRattrapage({ id_utilisateur, date: formattedDate, hours, reason });
-//     res.status(201).json({ message: 'Rattrapage ajouté avec succès', id: result.insertId });
-//   } catch (error) {
-//     console.error('Erreur lors de l\'ajout du rattrapage:', error);
-//     res.status(500).json({ message: 'Erreur serveur lors de l\'ajout du rattrapage' });
-//   }
-// };
-
-// exports.addRattrapage = async (req, res) => {
-//     try {
-//         const rattrapage = req.body;
-//         await Rattrapages.addRattrapage(rattrapage);
-//         console.log('Rattrapage ajouté avec succès');
-//         res.sendStatus(200);
-//     } catch (error) {
-//         console.error(error);
-//         res.sendStatus(500);
-//     }
-// };
 
 exports.updateRattrapage = async (req, res) => {
   try {

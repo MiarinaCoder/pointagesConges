@@ -119,32 +119,75 @@ export default function JustificationList({ onDelete }) {
       console.error('Error deleting justification:', error);
     }
   };
-
-  return (
-    <div className={styles.list}>
-      {justifications.length > 0 ? (
-        justifications.map((justification) => (
-          <div key={justification.idJustification} className={styles.item}>
-            <span>{justification.nomFichier}</span>
-            <div className={styles.actions}>
-              <button
-                onClick={() => handleDownload(justification.idJustification, justification.nomFichier)}
-                className={styles.downloadBtn}
-              >
-                Download
-              </button>
-              <button
-                onClick={() => handleDelete(justification.idJustification)}
-                className={styles.deleteBtn}
-              >
-                Delete
-              </button>
+    // return (
+    //   <div className={styles.list}>
+    //     {justifications.length > 0 ? (
+    //       justifications.map((justification) => (
+    //         <div key={justification.idJustification} className={styles.item}>
+    //           <div className={styles.fileInfo}>
+    //             <span className={styles.fileName}>{justification.nomFichier}</span>
+    //             <span className={styles.userInfo}>
+    //               Par: {justification.prenom} {justification.nom}
+    //             </span>
+    //           </div>
+    //           <div className={styles.actions}>
+    //             <button
+    //               onClick={() => handleDownload(justification.idJustification, justification.nomFichier)}
+    //               className={styles.downloadBtn}
+    //             >
+    //               Télécharger
+    //             </button>
+    //             <button
+    //               onClick={() => handleDelete(justification.idJustification)}
+    //               className={styles.deleteBtn}
+    //             >
+    //               Supprimer
+    //             </button>
+    //           </div>
+    //         </div>
+    //       ))
+    //     ) : (
+    //       <div>Pas de justification disponible</div>
+    //     )}
+    //   </div>
+    // );
+    return (
+      <div className={styles.list}>
+        {justifications.length > 0 ? (
+          justifications.map((justification) => (
+            <div key={justification.idJustification} className={styles.item}>
+             <div className={styles.fileInfo}>
+              {justification.retardDescription && (
+                <span className={styles.retardDescription}>
+                  Motif: {justification.retardDescription}
+                </span>
+              )}
+              <span className={styles.fileName}>{justification.nomFichier}</span>
+              <span className={styles.userInfo}>
+                Par: {justification.prenom} {justification.nom}
+              </span>
             </div>
-          </div>
-        ))
-      ) : (
-        <div>No justifications available</div>
-      )}
-    </div>
-  );
-}
+
+              <div className={styles.actions}>
+                <button
+                  onClick={() => handleDownload(justification.idJustification, justification.nomFichier)}
+                  className={styles.downloadBtn}
+                >
+                  Télécharger
+                </button>
+                <button
+                  onClick={() => handleDelete(justification.idJustification)}
+                  className={styles.deleteBtn}
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div>Pas de justification disponible</div>
+        )}
+      </div>
+    );
+    
+  }
