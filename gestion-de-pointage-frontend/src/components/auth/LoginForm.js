@@ -18,73 +18,47 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (isSubmitting) return;
+      setIsSubmitting(true);
+      setError('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    setError('');
-
-    try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 200000,
-          maximumAge: 0
-        });
-      });
-
-      await login(email, password, {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      });
-
-      router.push("/dashboard");
+      try {
+        await login(email, password);
+        router.push("/dashboard");
       
-    } catch (err) {
-      let errorMessage = '';
-    
-      console.log(err.response?.data);
-    if (err.response?.data?.code === 'ACTIVE_SESSION' || err.message?.includes('session active existe')) {
-      errorMessage = "Une session active existe déjà pour cet utilisateur";
-    } else if (err.response?.data?.code === 'HOURS_RESTRICTION' || err.message?.includes('entre 8h et 16h')) {
-      errorMessage = "Les sessions ne peuvent être créées qu'entre 8h et 16h";
-    } else {
-      switch (err.response?.status) {
-        case 401:
-          errorMessage = "Email ou mot de passe incorrect";
-          break;
-        case 403:
-          errorMessage = "Votre compte est désactivé. Veuillez contacter l'administrateur";
-          break;
-        case 404:
-          errorMessage = "Compte utilisateur introuvable";
-          break;
-        case 429:
-          errorMessage = "Trop de tentatives de connexion, veuillez patienter quelques minutes";
-          break;
-        case 'POSITION_ERROR':
-          errorMessage = "Impossible d'obtenir votre position. Veuillez activer la géolocalisation";
-          break;
-        default:
-          errorMessage = "Impossible de se connecter. Vérifiez votre connexion internet et réessayez";
+      } catch (err) {
+        let errorMessage = '';
+      
+        if (err.response?.data?.code === 'ACTIVE_SESSION') {
+          errorMessage = "Une session active existe déjà pour cet utilisateur";
+        } else if (err.response?.data?.code === 'HOURS_RESTRICTION') {
+          errorMessage = "Les sessions ne peuvent être créées qu'entre 8h et 16h";
+        } else {
+          switch (err.response?.status) {
+            case 401:
+              errorMessage = "Email ou mot de passe incorrect";
+              break;
+            case 403:
+              errorMessage = "Votre compte est désactivé";
+              break;
+            case 404:
+              errorMessage = "Compte utilisateur introuvable";
+              break;
+            case 429:
+              errorMessage = "Trop de tentatives de connexion";
+              break;
+            default:
+              errorMessage = "Impossible de se connecter. Réessayez";
+          }
+        }
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } finally {
+        setIsSubmitting(false);
       }
-    }
-
-    setError(errorMessage);
-    toast.error(errorMessage, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
-    } finally {
-      setIsSubmitting(false);
-    }
-};
-
+    };
 
 
   const togglePasswordVisibility = () => {
@@ -136,7 +110,7 @@ export default function LoginForm() {
         >
           {isSubmitting ? "" : "Se connecter"}
         </button>
-        <div className={styles.additionalOptions}>
+        {/* <div className={styles.additionalOptions}>
           <button
             type="button"
             className={styles.forgotPassword}
@@ -144,7 +118,7 @@ export default function LoginForm() {
           >
             Mot de passe oublié ?
           </button>
-        </div>
+        </div> */}
       </form>
     </div>
   );

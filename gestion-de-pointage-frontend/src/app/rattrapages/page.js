@@ -135,7 +135,7 @@ export default function Rattrapages() {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="hours">Nombre d'heures</label>
+            <label htmlFor="hours">Nombre d&apos;heures</label>
             <div className={styles.inputWrapper}>
               <input
                 id="hours"

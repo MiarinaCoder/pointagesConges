@@ -10,7 +10,7 @@ const Documentation = () => {
         <h2>Connexion</h2>
         <ul>
           <li>Utilisez votre email et mot de passe fournis</li>
-          <li>La connexion n'est possible qu'entre 8h et 16h</li>
+          <li>La connexion n&apos;est possible qu&apos;entre 8h et 16h</li>
           <li>Vous devez autoriser la géolocalisation</li>
         </ul>
       </section>
@@ -19,7 +19,7 @@ const Documentation = () => {
         <h2>Pointage</h2>
         <ul>
           <li>Une session démarre automatiquement à la connexion</li>
-          <li>La durée maximale d'une session est de 8 heures</li>
+          <li>La durée maximale d&apos;une session est de 8 heures</li>
           <li>Les retards sont automatiquement détectés et notifiés</li>
         </ul>
       </section>

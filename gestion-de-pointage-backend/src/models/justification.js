@@ -21,18 +21,23 @@ const JustificationAbsence = {
     );
     return rows[0];
   },
-
-  getAll: async () => {
-    const [rows] = await db.execute(
-      `SELECT j.idJustification, j.idRetard, j.nomFichier, j.typeDeFichier, j.dateAjout, 
-       u.nom, u.prenom, r.description as retardDescription
-       FROM justification j 
-       JOIN utilisateur u ON j.id_utilisateur = u.id
-       LEFT JOIN retards r ON j.idRetard = r.idRetard`
-    );
-    return rows;
-  },
-  
+    getAll: async () => {
+      const [rows] = await db.execute(
+        `SELECT 
+          j.idJustification, 
+          j.idRetard, 
+          j.nomFichier, 
+          j.typeDeFichier, 
+          j.dateAjout,
+          j.description,
+          u.nom, 
+          u.prenom
+        FROM justification j 
+        JOIN utilisateur u ON j.id_utilisateur = u.id
+        ORDER BY j.dateAjout DESC`
+      );
+      return rows;
+    },
 
   delete: async (id) => {
     const [result] = await db.execute(

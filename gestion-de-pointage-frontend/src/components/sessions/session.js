@@ -186,7 +186,7 @@ const Session = () => {
             className={styles.historyToggle}
             onClick={handleViewHistory}
           >
-            Voir l'historique complet
+            Voir l&apos;historique complet
           </button>
         </div>
 

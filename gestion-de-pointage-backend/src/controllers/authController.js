@@ -2,13 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const SessionsTravail = require("../models/sessionTravail");
-const LieuxTravail = require("../models/lieuxTravail");
 const { validationResult } = require("express-validator");
 const { format } = require("date-fns"); // Pour formater les dates
-const crypto = require("crypto");
-// const sendEmail = require("../utils/sendEmail");
-const { sendEmail } = require("../services/emailService");
-const { haversineDistance } = require('../utils/geoutils');
 
 
 // Amélioration du nombre de "salt rounds" pour le hashage des mots de passe
@@ -20,83 +15,21 @@ exports.login = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password, latitude, longitude } = req.body;
-
-  // Valider coordinates
-  if (!latitude || !longitude) {
-    console.log('Missing coordinates:', { latitude, longitude });
-    return res.status(400).json({
-      success: false,
-      message: 'Les coordonnées GPS sont requises'
-    });
-  }
-
-  const userLat = parseFloat(latitude);
-  const userLon = parseFloat(longitude);
-
-  if (isNaN(userLat) || isNaN(userLon)) {
-    console.log('Invalid coordinate format:', { latitude, longitude });
-    return res.status(400).json({
-      success: false,
-      message: 'Format des coordonnées GPS invalide'
-    });
-  }
+  const { email, password } = req.body;
   
   try {
     const [rows] = await User.findByEmail(email);
     if (rows.length === 0) {
-      return res
-        .status(401)
-        .json({ message: "Email ou mot de passe incorrect" });
+      return res.status(401).json({ message: "Email ou mot de passe incorrect" });
     }
 
     const utilisateur = rows[0];
-
-    // Vérifier si le mot de passe est valide
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      utilisateur.motDePasse
-    );
+    const isPasswordValid = await bcrypt.compare(password, utilisateur.motDePasse);
 
     if (!isPasswordValid) {
-      return res
-        .status(401)
-        .json({ message: "Email ou mot de passe incorrect" });
+      return res.status(401).json({ message: "Email ou mot de passe incorrect" });
     }
 
-    // Vérification de la localisation
-    const [lieux] = await LieuxTravail.getAllLieux();
-    const lieuValide = lieux.some((lieu) => {
-      const lieuLat = parseFloat(lieu.latitude);
-      const lieuLon = parseFloat(lieu.longitude);
-
-      // Add validation before calculation
-      if (!lieuLat || !lieuLon) {
-        console.log('Invalid coordinates detected:', {
-          user: { lat: userLat, lon: userLon },
-          lieu: { lat: lieuLat, lon: lieuLon }
-        });
-        return false;
-      }
-
-    const distance = haversineDistance(userLat, userLon, lieuLat, lieuLon);
-    console.log(`Distance: ${distance}m, Lieu: ${lieu.nom}, Coordonnées utilisateur: [${latitude}, ${longitude}], Coordonnées lieu: [${lieu.latitude}, ${lieu.longitude}]`);
-
-      if (distance > lieu.rayon) {
-        console.log(`Position non autorisée - Distance: ${(distance/1000).toFixed(2)}km, Lieu: ${lieu.nom}, Coordonnées utilisateur: [${latitude}, ${longitude}], Coordonnées lieu: [${lieu.latitude}, ${lieu.longitude}]`);
-        return false;
-      }
-      return true;
-    });
-
-    if (!lieuValide) {
-      return res.status(403).json({ message: "Vous n'êtes pas dans un lieu de travail autorisé.",
-      success: false,
-    });
-    }
-
-
-    // Démarrer une nouvelle session de travail immédiatement après la connexion
     const currentTimestamp = new Date();
     try {
       const [result] = await SessionsTravail.create({
@@ -104,10 +37,8 @@ exports.login = async (req, res) => {
         heureDebut: currentTimestamp,
       });
 
-      // Try these different approaches:
       const sessionId = result[0]?.idSession || result[0]?.[0]?.idSession || result.insertId;
 
-      // Générer un token JWT sécurisé avec le sessionId inclus dans le payload
       const token = jwt.sign(
         {
           nom: utilisateur.nom,
@@ -117,14 +48,13 @@ exports.login = async (req, res) => {
           role: utilisateur.role,
           genre: utilisateur.genre,
           fonction: utilisateur.fonction,
-          sessionId: sessionId, // On inclut le sessionId dans le token
+          sessionId: sessionId,
           sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
         },
-        process.env.JWT_SECRET, // Utiliser un secret JWT sécurisé via un fichier .env
-        { expiresIn: "11h", algorithm: "HS256" } // Configuration d'une expiration de 11 heures et algorithme sécurisé
+        process.env.JWT_SECRET,
+        { expiresIn: "11h", algorithm: "HS256" }
       );
 
-      // Répondre avec le token, le démarrage de la session et d'autres infos utiles
       res.json({
         token,
         sessionStart: format(currentTimestamp, "yyyy-MM-dd'T'HH:mm:ssXXX"),
@@ -138,9 +68,6 @@ exports.login = async (req, res) => {
         message: "Connexion réussie",
       });
     } catch (error) {
-      console.error("Erreur lors de la connexion:", error);
-      
-      // Add proper error handling
       if (error.code === 'ACTIVE_SESSION') {
         return res.status(400).json({ 
           code: 'ACTIVE_SESSION',
@@ -155,10 +82,7 @@ exports.login = async (req, res) => {
         });
       }
 
-      // Default error
-      res.status(500).json({ 
-        message: error.message || "Erreur serveur"
-      });
+      res.status(500).json({ message: error.message || "Erreur serveur" });
     }
   } catch (error) {
     console.error("Erreur lors de la connexion:", error);
@@ -166,6 +90,12 @@ exports.login = async (req, res) => {
   }
 };
 
+
+// const sendEmail = require("../utils/sendEmail");
+// const { haversineDistance } = require('../utils/geoutils');
+// const crypto = require("crypto");
+// const LieuxTravail = require("../models/lieuxTravail");
+// const { sendEmail } = require("../services/emailService");
 exports.requestPasswordReset = async (req, res) => {
   const { email } = req.body;
   try {

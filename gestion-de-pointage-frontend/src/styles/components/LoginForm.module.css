@@ -60,7 +60,8 @@
     box-sizing: border-box;
   }
 .inputGroup input:focus {
-  border-color: #4a90e2;
+  /* border-color: #4a90e2; */
+  border-color: #2c3e50;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
@@ -78,7 +79,8 @@
 .loginButton {
   width: 100%;
   padding: 12px;
-  background-color: #4a90e2;
+  /* background-color: #4a90e2; */
+  background-color: #2c3e50;
   color: white;
   border: none;
   border-radius: 8px;
@@ -89,7 +91,8 @@
 }
 
 .loginButton:hover {
-  background-color: #3a7bc8;
+  /* background-color: #3a7bc8; */
+  background-color: #365979;
 }
 
 .error {
@@ -117,7 +120,8 @@
 .forgotPassword {
   background: none;
   border: none;
-  color: #4a90e2;
+  /* color: #4a90e2; */
+  color: #2c3e50;
   cursor: pointer;
   font-size: 0.9rem;
   text-decoration: underline;

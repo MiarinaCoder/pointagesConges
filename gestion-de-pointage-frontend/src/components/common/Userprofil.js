@@ -1,12 +1,13 @@
 import styles from '../../styles/components/Menu.module.css';
 import { FaUserCircle,FaBriefcase,FaCog,FaBuilding } from 'react-icons/fa';
+import Image from 'next/image';
 
 const UserProfile = ({ user }) => {
     return (
       <div className={styles.userProfile}>
         <div className={styles.userAvatarWrapper}>
           {user?.photoUrl ? (
-            <img 
+            <Image
               src={user.photoUrl} 
               alt={`${user.prenom} ${user.nom}`} 
               className={styles.userAvatar}

@@ -88,7 +88,37 @@ const Retard = {
       success: true,
       message: "Description updated successfully"
     };
-  }
-};
+  },
+
+  submitJustification: async (retardId, data) => {
+    const connection = await db.getConnection();
+  
+    try {
+      await connection.beginTransaction();
+    
+      // Insert into justification table with id_utilisateur
+      const [justificationResult] = await connection.query(
+        `INSERT INTO justification 
+        (idRetard, fichierJustificatif, nomFichier, typeDeFichier, description, id_utilisateur) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
+        [retardId, data.fichierJustificatif, data.nomFichier, data.typeDeFichier, data.description, data.id_utilisateur]
+      );
+
+      // Update retard status
+      await connection.query(
+        "UPDATE retards SET estJustifie = 1 WHERE idRetard = ?",
+        [retardId]
+      );
+
+      await connection.commit();
+      return justificationResult;
+    
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }};
 
 module.exports= Retard;

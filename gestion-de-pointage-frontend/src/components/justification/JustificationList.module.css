@@ -1,90 +1,74 @@
 .list {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
 }
 
 .item {
   background: white;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: transform 0.2s;
-}
-
-.item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
 }
 
 .fileInfo {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0.5rem;
 }
-
+  .motif {
+    background: rgba(128, 0, 128, 0.1);
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
 .fileName {
   font-weight: 600;
   color: #2c3e50;
-  font-size: 1.1em;
 }
 
 .userInfo {
+  font-size: 0.85rem;
   color: #666;
-  font-size: 0.9em;
 }
 
 .actions {
   display: flex;
-  gap: 10px;
+  gap: 0.75rem;
 }
 
 .downloadBtn, .deleteBtn {
-  padding: 8px 16px;
+  padding: 0.6rem 1.2rem;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 6px;
   font-weight: 500;
-  transition: all 0.2s;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .downloadBtn {
-  background-color: #3498db;
+  background: #007bff;
   color: white;
 }
 
 .downloadBtn:hover {
-  background-color: #2980b9;
+  background: #0056b3;
 }
 
 .deleteBtn {
-  background-color: #e74c3c;
-  color: white;
+  background: #fff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
 }
 
 .deleteBtn:hover {
-  background-color: #c0392b;
-}
-
-.retardDescription {
-  font-size: 0.9em;
-  color: #666;
-  margin-top: 4px;
-  display: block;
-}
-
-.retardDescription {
-  font-size: 1.1em;
-  color: #333;
-  margin: 8px 0;
-  font-weight: 500;
-  padding: 8px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  border-left: 4px solid #2196f3;
+  background: #dc3545;
+  color: white;
 }

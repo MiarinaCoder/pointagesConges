@@ -2,50 +2,28 @@ import api from './api';
 
 export const retardService = {
   checkRetard: async (sessionId) => {
-    try {
-      const response = await api.get(`/retards/check/${sessionId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get(`/retards/check/${sessionId}`);
+    return response.data;
   },
 
-  updateJustification: async (idRetard) => {
-    try {
-      const response = await api.put(`/retards/justify/${idRetard}`, {}, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+  updateJustification: async (retardId) => {
+    const response = await api.put(`/retards/${retardId}/justification`);
+    return response.data;
   },
 
-//   updateJustification: async (idRetard, formData) => {
-//     const response = await fetch(`${API_URL}/retards/${idRetard}/justification`, {
-//       method: 'POST',
-//       body: formData,
-//       // Don't set Content-Type header - let the browser set it with boundary
-//     });
-//     if (!response.ok) throw new Error('Failed to update justification');
-//     return response.json();
-// },
+  updateDescription: async (retardId, description) => {
+    const response = await api.put(`/retards/${retardId}/description`, { description });
+    return response.data;
+  },
 
-
-  updateDescription: async (idRetard, description) => {
-    try {
-      const response = await api.put(`/retards/description/${idRetard}`, 
-        { description }, 
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  }};
-
-
+  submitJustification: async (retardId, formData) => {
+    const token = localStorage.getItem('token');
+    const response = await api.post(`/retards/${retardId}/justification`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    return response.data;
+  }
+};

@@ -744,7 +744,7 @@ const handleSuggestionResponse = async (congeId, accepted) => {
         </div>
       ) : conges.length === 0 ? (
         <div className={styles.noData}>
-          Aucune demande de congé n'a été trouvée.
+          Aucune demande de congé n&apos;a été trouvée.
         </div>
       ) : (
                   <div className={styles.tableContainer}>

@@ -143,7 +143,7 @@ const Dashboard = () => {
             <div className={styles.chartSection}>
               {user?.role === "administrateur" && (
                 <h2>
-                  <FaChartPie /> Statistiques de présence des employés aujourd'hui
+                  <FaChartPie /> Statistiques de présence des employés aujourd&apos;hui
                 </h2>
               )}
               {user?.role === "employe" && (

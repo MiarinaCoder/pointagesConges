@@ -102,51 +102,44 @@ export const AuthProvider = ({ children }) => {
   //   //   throw new Error(errorMessage);
   //   // }
   // };
+    const login = async (email, password) => {
+      try {
+        const response = await api.post('/auth/login', {
+          email,
+          password
+        });
 
-  const login = async (email, password, location) => {
-    try {
-      const response = await api.post('/auth/login', {
-        email,
-        password,
-        latitude: location.latitude,
-        longitude: location.longitude
-      });
-  
-      console.log('Raw response:', response);
-  
-      if (!response.data || !response.data.token) {
-        throw new Error('Invalid response format');
-      }
-  
-      // Set all required data in localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('sessionStart', response.data.sessionStart);
-      localStorage.setItem('sessionId', response.data.sessionId.toString());
-      localStorage.setItem('user', JSON.stringify({
-        id: response.data.userId,
-        email,
-        role: response.data.role,
-        prenom: response.data.prenom,
-        nom: response.data.nom,
-        fonction: response.data.fonction,
-      }));
+        if (!response.data || !response.data.token) {
+          throw new Error('Invalid response format');
+        }
+
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('sessionStart', response.data.sessionStart);
+        localStorage.setItem('sessionId', response.data.sessionId.toString());
+        localStorage.setItem('user', JSON.stringify({
+          id: response.data.userId,
+          email,
+          role: response.data.role,
+          prenom: response.data.prenom,
+          nom: response.data.nom,
+          fonction: response.data.fonction,
+        }));
       
-      setUser({
-        id: response.data.userId,
-        email,
-        role: response.data.role,
-        prenom: response.data.prenom,
-        fonction: response.data.fonction,
-      });
-      setIsAuthenticated(true);
-  
-      return response.data;
-    } catch (error) {
-      console.log('Login error:', error);
-      throw error;
-    }
-  };
-  
+        setUser({
+          id: response.data.userId,
+          email,
+          role: response.data.role,
+          prenom: response.data.prenom,
+          fonction: response.data.fonction,
+        });
+        setIsAuthenticated(true);
+
+        return response.data;
+      } catch (error) {
+        console.log('Login error:', error);
+        throw error;
+      }
+    };
 
 
   // Fonction de déconnexion

@@ -149,7 +149,7 @@ const formatDate = (dateString) => {
             <input
             type="date"
             value={formatDate(conge?.dateDebutAbsence)}
-            className={styles.input}
+            // className={styles.input}
             disabled
             />
         </div>
@@ -159,7 +159,7 @@ const formatDate = (dateString) => {
           <input
             type="date"
             {...register("dateDebutAbsence", { required: "Date requise" })}
-            className={styles.input}
+            // className={styles.input}
           />
           {errors.dateDebutAbsence && (
             <p className={styles.error}>{errors.dateDebutAbsence.message}</p>
@@ -176,7 +176,7 @@ const formatDate = (dateString) => {
               required: "Nombre de jours requis",
               min: 0.5
             })}
-            className={styles.input}
+            // className={styles.input}
           />
           {errors.nombre_jour_conge && (
             <p className={styles.error}>{errors.nombre_jour_conge.message}</p>
@@ -188,7 +188,7 @@ const formatDate = (dateString) => {
           <input
             type="date"
             {...register("dateFinAbsence")}
-            className={styles.input}
+            // className={styles.input}
             readOnly
           />
         </div>
