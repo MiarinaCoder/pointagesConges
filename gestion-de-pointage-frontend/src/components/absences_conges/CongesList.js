@@ -506,7 +506,7 @@ import {
 import CongeForm from "../forms/CongeForm";
 import Modal from "../common/Modal";
 import ModalConfirmation from "../common/ModalConfirmation";
-import styles from "../../styles/components/congeList.module.css";
+import styles from "../../styles/components/CongeList.module.css";
 import api from "@/services/api";
 import ActionDropdown from "../common/ActionDropdown";
 import { toast } from "react-toastify";
