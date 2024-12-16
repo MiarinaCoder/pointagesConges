@@ -123,6 +123,7 @@ export const AuthProvider = ({ children }) => {
           prenom: response.data.prenom,
           nom: response.data.nom,
           fonction: response.data.fonction,
+          genre: response.data.genre
         }));
       
         setUser({
@@ -131,6 +132,7 @@ export const AuthProvider = ({ children }) => {
           role: response.data.role,
           prenom: response.data.prenom,
           fonction: response.data.fonction,
+          genre:response.data.genre
         });
         setIsAuthenticated(true);
 

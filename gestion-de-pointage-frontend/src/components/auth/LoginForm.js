@@ -8,6 +8,8 @@ import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from "../../styles/components/LoginForm.module.css";
 import ForgotPasswordForm from "./ForgotPasswordForm";
 import { toast } from "react-toastify";
+import Image from "next/image";
+import Img from './depannpc_logo.jpg';
 
 export default function LoginForm() {
   const { login } = useContext(AuthContext);
@@ -69,10 +71,14 @@ export default function LoginForm() {
     return <ForgotPasswordForm onBack={() => setShowForgotPassword(false)} />;
   }
 
+
+
   return (
     <div className={styles.loginContainer}>
       <form onSubmit={handleSubmit} className={styles.loginForm}>
-        <h2>Connexion</h2>
+        <center><Image src={Img} width={150} height={75}></Image></center>
+        <br></br>
+        <center><h2>Connexion</h2></center>
         {error && <p className={styles.error}>{error}</p>}
         <div className={styles.inputGroup}>
           <FaUser className={styles.icon} />

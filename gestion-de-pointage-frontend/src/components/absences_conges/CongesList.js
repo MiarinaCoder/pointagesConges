@@ -525,6 +525,8 @@ export default function CongeList({ userId, isAdmin }) {
   const [refreshKey, setRefreshKey] = useState(0);
   // const [isSuggesting, setIsSuggesting] = useState(false);
   const [isViewSuggestionModalOpen, setIsViewSuggestionModalOpen] = useState(false);
+  // const userLocalStorage=localStorage.getItem('user');
+  // const idLocalstorage=userLocalStorage.id;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -573,13 +575,29 @@ export default function CongeList({ userId, isAdmin }) {
     }
   }, [userId]);
 
-  useEffect(() => {
-    fetchConges();
+  const fetchCongesEmploye = useCallback(async () => {
+    setLoading(true);
+    try {
+      const endpoint =  `/absence/conge/user/${userId}`;
+      const response = await api.get(endpoint);
+      setConges(response.data);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des congés:", error);
+      toast.error("Erreur lors du chargement des congés");
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(()=>{
+    fetchConges(); 
   }, [fetchConges, refreshKey]);
 
   const handleCreate = async (newConge) => {
     try {
-      await api.post("/absence", newConge);
+      const response= await api.post("/absence", newConge);
+      // const createdConge = response.data;
+      // setConges((prev) => [createdConge, ...prev]); // Ajouter immédiatement
       setRefreshKey((prev) => prev + 1);
       setIsModalOpen(false);
       toast.success("Congé créé avec succès");
@@ -590,7 +608,9 @@ export default function CongeList({ userId, isAdmin }) {
 
   const handleUpdate = async (updatedConge) => {
     try {
-      await api.put(`/absence/${selectedConge.idAbsence}`, updatedConge);
+      const response= await api.put(`/absence/${selectedConge.idAbsence}`, updatedConge);
+      // const updatedCongeData = response.data;
+      // setConges((prev) => [updatedCongeData, ...prev]); // Ajouter immédiatement
       setRefreshKey((prev) => prev + 1);
       setIsModalOpen(false);
       setSelectedConge(null);

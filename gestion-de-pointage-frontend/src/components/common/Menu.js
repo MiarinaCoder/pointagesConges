@@ -265,7 +265,7 @@ export default function Menu() {
 
   const renderMenuGroup = (items, groupTitle) => (
     <div className={styles.menuGroup} key={groupTitle || 'main'}>
-      {groupTitle && <h3 className={styles.menuGroupTitle}>{groupTitle}</h3>}
+      {/* {groupTitle && <h3 className={styles.menuGroupTitle}>{groupTitle}</h3>} */}
       <ul className={styles.menuItems}>
         {items.map((item) => (
           <li key={item.path} className={pathname === item.path ? styles.active : ""}>

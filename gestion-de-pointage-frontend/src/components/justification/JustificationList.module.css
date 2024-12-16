@@ -72,3 +72,12 @@
   background: #dc3545;
   color: white;
 }
+
+.imageContainer {
+  margin-top: 10px;
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+}

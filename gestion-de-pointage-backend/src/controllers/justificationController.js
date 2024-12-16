@@ -50,9 +50,11 @@ const justificationController = {
         });
       }
   
+      const fileBuffer = Buffer.from(justification.fichierJustificatif, 'base64');
+
       res.setHeader('Content-Type', justification.typeDeFichier);
       res.setHeader('Content-Disposition', `attachment; filename="${justification.nomFichier}"`);
-      res.send(justification.fichierJustificatif);
+      res.send(fileBuffer);
     } catch (error) {
       res.status(500).json({
         success: false,
